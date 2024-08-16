@@ -3,9 +3,7 @@ package com.edtech.EdTech.model.courses;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-
 import java.time.LocalDate;
-
 
 @Entity
 @Getter
