@@ -1,40 +1,21 @@
 package com.edtech.EdTech.service;
 
 import com.edtech.EdTech.model.courses.Course;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
-@Service
-public class CourseService implements CourseServiceImpl{
-    @Override
-    public Course addNewCourse() {
-        return null;
-    }
+public interface CourseService {
 
-    @Override
-    public List<Course> getAllCourses() {
-        return null;
-    }
+    Course addNewCourse();
 
-    @Override
-    public List<Course> getAllCoursesByCategory() {
-        return null;
-    }
+    List<Course> getAllCourses();
 
-    @Override
-    public Optional<Course> getCourseById() {
-        return Optional.empty();
-    }
+    List<Course> getAllCoursesByCategory();
 
-    @Override
-    public void DeleteCourse(Long courseId) {
+    Optional<Course> getCourseById();
 
-    }
+    void DeleteCourse(Long courseId);
 
-    @Override
-    public Course updateCourse() {
-        return null;
-    }
+    Course updateCourse();
 }
