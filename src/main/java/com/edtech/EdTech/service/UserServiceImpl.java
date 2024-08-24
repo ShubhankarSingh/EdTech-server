@@ -5,6 +5,8 @@ import com.edtech.EdTech.exception.UserAlreadyExistsException;
 import com.edtech.EdTech.model.user.User;
 import com.edtech.EdTech.repository.RoleRepository;
 import com.edtech.EdTech.repository.UserRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +32,7 @@ public class UserServiceImpl implements UserService {
     public User saveUser(UserDto userDto) {
         try{
             // Check if a user with this email already exists
-            if(userRepository.findByEmail(userDto.getEmail()) != null){
+            if(userRepository.findByEmail(userDto.getEmail()).isPresent()){
                 throw new UserAlreadyExistsException("User with email " + userDto.getEmail() + " already exists.");
             }
 
@@ -50,7 +52,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findUserByEmail(String email) {
-        return userRepository.findByEmail(email);
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
     @Override
@@ -58,8 +61,17 @@ public class UserServiceImpl implements UserService {
         List<User> users = userRepository.findAll();
 
         return users.stream()
-                .map((user) -> mapToUserDto(user))
+                .map(this::mapToUserDto)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    @Override
+    public void deleteUser(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(()->new UsernameNotFoundException("User with email " + email + " not found."));
+
+        userRepository.delete(user);
     }
 
     private UserDto mapToUserDto(User user) {
