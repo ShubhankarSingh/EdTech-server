@@ -2,7 +2,7 @@ package com.edtech.EdTech.service;
 
 import com.edtech.EdTech.dto.UserDto;
 import com.edtech.EdTech.exception.UserAlreadyExistsException;
-import com.edtech.EdTech.model.user.User;
+import com.edtech.EdTech.model.users.User;
 import com.edtech.EdTech.repository.RoleRepository;
 import com.edtech.EdTech.repository.UserRepository;
 import jakarta.transaction.Transactional;

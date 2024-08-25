@@ -1,6 +1,6 @@
 package com.edtech.EdTech.service;
 
-import com.edtech.EdTech.model.user.Role;
+import com.edtech.EdTech.model.users.Role;
 
 import java.util.List;
 

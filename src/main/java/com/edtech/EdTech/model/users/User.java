@@ -1,4 +1,4 @@
-package com.edtech.EdTech.model.user;
+package com.edtech.EdTech.model.users;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

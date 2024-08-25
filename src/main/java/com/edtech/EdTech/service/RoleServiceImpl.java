@@ -1,14 +1,11 @@
 package com.edtech.EdTech.service;
 
 import com.edtech.EdTech.exception.RoleAlreadyExistsException;
-import com.edtech.EdTech.model.user.Role;
+import com.edtech.EdTech.model.users.Role;
 import com.edtech.EdTech.repository.RoleRepository;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.management.relation.RoleNotFoundException;
 import java.util.List;
 
 @Service

@@ -2,9 +2,8 @@ package com.edtech.EdTech.controller;
 
 import com.edtech.EdTech.dto.UserDto;
 import com.edtech.EdTech.exception.UserAlreadyExistsException;
-import com.edtech.EdTech.model.user.User;
+import com.edtech.EdTech.model.users.User;
 import com.edtech.EdTech.service.UserService;
-import com.edtech.EdTech.service.UserServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

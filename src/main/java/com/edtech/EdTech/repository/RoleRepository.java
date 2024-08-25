@@ -1,6 +1,6 @@
 package com.edtech.EdTech.repository;
 
-import com.edtech.EdTech.model.user.Role;
+import com.edtech.EdTech.model.users.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

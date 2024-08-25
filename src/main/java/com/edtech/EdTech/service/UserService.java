@@ -1,7 +1,7 @@
 package com.edtech.EdTech.service;
 
 import com.edtech.EdTech.dto.UserDto;
-import com.edtech.EdTech.model.user.User;
+import com.edtech.EdTech.model.users.User;
 
 import java.util.List;
 

@@ -2,14 +2,11 @@ package com.edtech.EdTech.controller;
 
 
 import com.edtech.EdTech.exception.RoleAlreadyExistsException;
-import com.edtech.EdTech.model.user.Role;
+import com.edtech.EdTech.model.users.Role;
 import com.edtech.EdTech.service.RoleService;
-import com.edtech.EdTech.service.RoleServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
