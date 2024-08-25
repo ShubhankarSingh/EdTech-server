@@ -2,11 +2,15 @@ package com.edtech.EdTech.model.user;
 
 
 import jakarta.persistence.*;
-import lombok.Generated;
+import lombok.*;
 
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "roles")
 public class Role {
 
@@ -20,4 +24,6 @@ public class Role {
     @ManyToMany(mappedBy = "roles")
     private List<User> users;
 
+    public Role(String roleName) {
+    }
 }

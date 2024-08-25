@@ -3,6 +3,7 @@ package com.edtech.EdTech.controller;
 import com.edtech.EdTech.dto.UserDto;
 import com.edtech.EdTech.exception.UserAlreadyExistsException;
 import com.edtech.EdTech.model.user.User;
+import com.edtech.EdTech.service.UserService;
 import com.edtech.EdTech.service.UserServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private UserServiceImpl userService;
+    private UserService userService;
 
     /*public AuthController(UserService userService){
         this.userService = userService;

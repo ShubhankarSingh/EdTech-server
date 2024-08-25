@@ -19,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 public class UserController {
 
-    private UserServiceImpl userService;
+    private UserService userService;
 
     // API to fetch a single user from the DB
 
