@@ -1,8 +1,10 @@
 package com.edtech.EdTech.security;
 
 import com.edtech.EdTech.security.jwt.AuthTokenFilter;
+import com.edtech.EdTech.security.jwt.JwtAuthEntryPoint;
 import com.edtech.EdTech.security.user.CustomUserDetailsService;
 import jakarta.security.auth.message.config.AuthConfigProvider;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -17,9 +19,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     private CustomUserDetailsService userDetailsService;
+    private JwtAuthEntryPoint jwtAuthEntryPoint;
 
     @Bean
     public AuthTokenFilter authenticationTokenFilter(){

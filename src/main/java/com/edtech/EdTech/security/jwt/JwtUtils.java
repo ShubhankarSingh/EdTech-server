@@ -9,6 +9,7 @@ import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
@@ -80,9 +81,14 @@ public class JwtUtils {
     }
 
     // Validate the token against user details and expiration
-    public boolean validateToken(String token, CustomUserDetails userDetails){
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    public boolean validateToken(String token){
+        try {
+            Jwts.parserBuilder().setSigningKey(getSignKey()).build().parse(token);
+            return true;
+        }
+        catch (Exception ex) {
+            throw new AuthenticationCredentialsNotFoundException("JWT token is not valid " + token);
+        }
     }
 
 }
