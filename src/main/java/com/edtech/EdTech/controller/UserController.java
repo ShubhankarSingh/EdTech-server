@@ -1,5 +1,6 @@
 package com.edtech.EdTech.controller;
 
+import com.edtech.EdTech.dto.UserDisplayDto;
 import com.edtech.EdTech.dto.UserDto;
 import com.edtech.EdTech.model.users.User;
 import com.edtech.EdTech.service.UserService;
@@ -7,14 +8,12 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController("/api/user")
+@RestController
+@RequestMapping("/api/users")
 @AllArgsConstructor
 public class UserController {
 
@@ -22,11 +21,11 @@ public class UserController {
 
     // API to fetch a single user from the DB
 
-    @GetMapping("/users/{email}")
+    @GetMapping("/user/{email}")
     public ResponseEntity<?> findUserByEmail(@PathVariable("email") String email){
 
         try {
-            User theUser = userService.findUserByEmail(email);
+            UserDisplayDto theUser = userService.findUserByEmail(email);
             return ResponseEntity.ok(theUser);
         }catch (UsernameNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -38,8 +37,8 @@ public class UserController {
     // API to fetch all te users from the DB, use UserDto instead of User for data privacy
 
     @GetMapping("/all-users")
-    public ResponseEntity<List<UserDto>> getAllUsers(){
-        List<UserDto> allUsers = userService.findAllUsers();
+    public ResponseEntity<List<UserDisplayDto>> getAllUsers(){
+        List<UserDisplayDto> allUsers = userService.findAllUsers();
         return ResponseEntity.ok(allUsers);
     }
 

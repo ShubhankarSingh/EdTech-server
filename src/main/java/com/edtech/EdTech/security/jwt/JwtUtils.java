@@ -34,12 +34,12 @@ public class JwtUtils {
     // Create a JWT token with specified claims and subject (email)
     public String generateToken(Authentication authentication){
         CustomUserDetails userPrincipal = (CustomUserDetails) authentication.getPrincipal();
-        List<String> roles = userPrincipal.getAuthorities()
-                .stream()
-                .map(GrantedAuthority::getAuthority).toList();
+//        List<String> roles = userPrincipal.getAuthorities()
+//                .stream()
+//                .map(GrantedAuthority::getAuthority).toList();
         return Jwts.builder()
                 .setSubject(userPrincipal.getUsername())
-                .claim("roles", roles)
+//                .claim("roles", roles)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime()+jwtExpirationMs))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256).compact();

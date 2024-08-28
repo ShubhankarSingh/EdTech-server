@@ -1,5 +1,6 @@
 package com.edtech.EdTech.service;
 
+import com.edtech.EdTech.dto.UserDisplayDto;
 import com.edtech.EdTech.dto.UserDto;
 import com.edtech.EdTech.model.users.User;
 
@@ -9,9 +10,9 @@ public interface UserService {
 
     User saveUser(UserDto userDto);
 
-    User findUserByEmail(String email);
+    UserDisplayDto findUserByEmail(String email);
 
-    List<UserDto> findAllUsers();
+    List<UserDisplayDto> findAllUsers();
 
     void deleteUser(String email);
 

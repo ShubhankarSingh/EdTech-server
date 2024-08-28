@@ -23,18 +23,17 @@ public class CustomUserDetails implements UserDetails{
     private Long id;
     private String email;
     private String password;
-    private Collection<GrantedAuthority> authorities;
+//    private Collection<GrantedAuthority> authorities;
 
     public static CustomUserDetails buildUserDetails(User user){
-        List<GrantedAuthority> authorities = user.getRoles()
-                .stream()
-                .map(role-> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toList());
+//        List<GrantedAuthority> authorities = user.getRoles()
+//                .stream()
+//                .map(role-> new SimpleGrantedAuthority(role.getName()))
+//                .collect(Collectors.toList());
         return new CustomUserDetails(
                 user.getId(),
                 user.getEmail(),
-                user.getPassword(),
-                authorities);
+                user.getPassword());
     }
 
     @Override

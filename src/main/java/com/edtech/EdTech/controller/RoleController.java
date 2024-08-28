@@ -16,7 +16,7 @@ import java.util.List;
 @RequestMapping("/api/roles")
 public class RoleController {
 
-    private RoleService roleService;
+    private final RoleService roleService;
 
     @PostMapping
     public ResponseEntity<?> createRole(@RequestBody Role role){
