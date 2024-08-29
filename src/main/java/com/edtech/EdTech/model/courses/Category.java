@@ -1,5 +1,6 @@
 package com.edtech.EdTech.model.courses;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,6 +19,7 @@ public class Category {
     private String categoryType;
 
     @OneToMany(mappedBy = "category")
+    @JsonIgnore
     private Set<Course> courses;
 
 }
