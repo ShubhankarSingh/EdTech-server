@@ -19,8 +19,21 @@ public class CourseServiceImpl implements CourseService {
     private final CategoryRepository categoryRepository;
 
     @Override
-    public Course addNewCourse() {
-        return null;
+    public Course addNewCourse(Course course) {
+        try{
+            Course theCourse = new Course();
+            theCourse.setAuthor(course.getAuthor());
+            theCourse.setCategory(course.getCategory());
+            theCourse.setTitle(course.getTitle());
+            theCourse.setShortDescription(course.getShortDescription());
+            theCourse.setDescription(course.getDescription());
+            theCourse.setLanguage(course.getLanguage());
+            theCourse.setCreatedDate(course.getCreatedDate());
+
+            return courseRepository.save(theCourse);
+        }catch (Exception e){
+            throw new RuntimeException("An error occurred while saving the user: " + e.getMessage());
+        }
     }
 
     @Override

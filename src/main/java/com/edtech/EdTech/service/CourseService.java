@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface CourseService {
 
-    Course addNewCourse();
+    Course addNewCourse(Course course);
 
     List<Course> getAllCourses();
     List<Course> getAllCoursesByCategory(String category);
