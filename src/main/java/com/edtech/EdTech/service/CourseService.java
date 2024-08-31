@@ -15,6 +15,8 @@ public interface CourseService {
 
     Optional<Course> getCourseById();
 
+    Optional<Course> getCourseByTitle(String title);
+
     void DeleteCourse(Long courseId);
 
     Course updateCourse();

@@ -1,5 +1,6 @@
 package com.edtech.EdTech.service;
 
+import com.edtech.EdTech.exception.ItemNotFoundException;
 import com.edtech.EdTech.model.courses.Category;
 import com.edtech.EdTech.model.courses.Course;
 import com.edtech.EdTech.repository.CategoryRepository;
@@ -30,7 +31,9 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public List<Course> getAllCoursesByCategory(String category) {
         Category theCategory = categoryRepository.findByCategoryType(category);
-        System.out.println("Category Type: " + theCategory);
+        if(theCategory == null){
+            throw new ItemNotFoundException("We can’t find the page you’re looking for.");
+        }
         List<Course> courses = courseRepository.findCoursesByCategoryId(theCategory.getId());
 
         return courses;
@@ -39,6 +42,15 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public Optional<Course> getCourseById() {
         return Optional.empty();
+    }
+
+    @Override
+    public Optional<Course> getCourseByTitle(String title) {
+        Optional<Course> theCourse = courseRepository.findCourseByTitle(title);
+        if(theCourse.isEmpty()){
+            throw new ItemNotFoundException("We can’t find the page you’re looking for.");
+        }
+        return theCourse;
     }
 
     @Override
