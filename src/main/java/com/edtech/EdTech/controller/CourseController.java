@@ -1,6 +1,7 @@
 package com.edtech.EdTech.controller;
 
 
+import com.edtech.EdTech.dto.CourseDto;
 import com.edtech.EdTech.exception.ItemNotFoundException;
 import com.edtech.EdTech.model.courses.Category;
 import com.edtech.EdTech.model.courses.Course;
@@ -22,10 +23,9 @@ public class CourseController {
     private final CourseService courseService;
 
     @PostMapping("/add-course")
-    public ResponseEntity<?> addCourse(@RequestBody Course course){
+    public ResponseEntity<?> addCourse(@RequestBody CourseDto courseDto){
         try{
-            System.out.println("Course body: " + course);
-            Course theCourse = courseService.addNewCourse(course);
+            Course theCourse = courseService.addNewCourse(courseDto);
             return ResponseEntity.ok(theCourse);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

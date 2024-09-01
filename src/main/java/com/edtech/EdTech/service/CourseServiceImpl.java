@@ -1,5 +1,6 @@
 package com.edtech.EdTech.service;
 
+import com.edtech.EdTech.dto.CourseDto;
 import com.edtech.EdTech.exception.ItemNotFoundException;
 import com.edtech.EdTech.model.courses.Category;
 import com.edtech.EdTech.model.courses.Course;
@@ -19,20 +20,23 @@ public class CourseServiceImpl implements CourseService {
     private final CategoryRepository categoryRepository;
 
     @Override
-    public Course addNewCourse(Course course) {
+    public Course addNewCourse(CourseDto courseDto) {
         try{
             Course theCourse = new Course();
-            theCourse.setAuthor(course.getAuthor());
-            theCourse.setCategory(course.getCategory());
-            theCourse.setTitle(course.getTitle());
-            theCourse.setShortDescription(course.getShortDescription());
-            theCourse.setDescription(course.getDescription());
-            theCourse.setLanguage(course.getLanguage());
-            theCourse.setCreatedDate(course.getCreatedDate());
+            theCourse.setAuthor(courseDto.getAuthor());
+            theCourse.setTitle(courseDto.getTitle());
+            theCourse.setShortDescription(courseDto.getShortDescription());
+            theCourse.setDescription(courseDto.getDescription());
+            theCourse.setLanguage(courseDto.getLanguage());
+            theCourse.setCreatedDate(courseDto.getCreatedDate());
+
+            Category category = categoryRepository.findById(courseDto.getCategoryId())
+                    .orElseThrow(()-> new RuntimeException("Category not found with ID: " + courseDto.getCategoryId()));
+            theCourse.setCategory(category);
 
             return courseRepository.save(theCourse);
         }catch (Exception e){
-            throw new RuntimeException("An error occurred while saving the user: " + e.getMessage());
+            throw new RuntimeException("An error occurred while saving the course: " + e.getMessage());
         }
     }
 
