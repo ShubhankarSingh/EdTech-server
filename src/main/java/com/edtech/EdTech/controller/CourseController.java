@@ -70,4 +70,17 @@ public class CourseController {
         }
     }
 
+    @DeleteMapping("/delete/{courseId}")
+    public ResponseEntity<String> deleteCourse(@PathVariable Long courseId){
+        try{
+            courseService.deleteCourse(courseId);
+            return ResponseEntity.ok("Course with id " + courseId + " deleted successfully.");
+        }catch (ItemNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
 }

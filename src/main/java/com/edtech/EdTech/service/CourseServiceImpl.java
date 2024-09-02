@@ -71,7 +71,11 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public void DeleteCourse(Long courseId) {
+    public void deleteCourse(Long courseId) {
+        Course theCourse = courseRepository.findById(courseId)
+                .orElseThrow(()-> new ItemNotFoundException("No course found with id: " + courseId));
+
+        courseRepository.deleteById(courseId);
 
     }
 

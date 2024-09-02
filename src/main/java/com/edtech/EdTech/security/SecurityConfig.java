@@ -64,7 +64,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/roles/**").permitAll()
                                 .requestMatchers("/api/users/**").permitAll()
                                 .requestMatchers("/courses/**").permitAll()
-                               .anyRequest().authenticated()
+                                .anyRequest().authenticated()
                 ).build();
 
     }
