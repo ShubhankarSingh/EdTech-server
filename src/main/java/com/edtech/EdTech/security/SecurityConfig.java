@@ -59,11 +59,12 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(authenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth->
+//                        auth.requestMatchers("/**").permitAll()
                                 auth.requestMatchers("/api/auth/**").permitAll()
                                 .requestMatchers("/api/roles/**").permitAll()
                                 .requestMatchers("/api/users/**").permitAll()
                                 .requestMatchers("/courses/**").permitAll()
-                                .anyRequest().authenticated()
+                               .anyRequest().authenticated()
                 ).build();
 
     }

@@ -60,4 +60,14 @@ public class CourseController {
         }
     }
 
+    @PutMapping("/update/{courseId}")
+    public ResponseEntity<?> updateCourse(@PathVariable Long courseId, @RequestBody CourseDto courseDto){
+        try{
+            Course theCourse = courseService.updateCourse(courseId, courseDto);
+            return ResponseEntity.ok(theCourse);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
 }
