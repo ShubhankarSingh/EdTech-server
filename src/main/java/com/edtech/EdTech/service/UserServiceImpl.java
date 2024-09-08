@@ -34,24 +34,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User saveUser(UserDto userDto) {
-        try{
-            // Check if a user with this email already exists
-            if(userRepository.findByEmail(userDto.getEmail()).isPresent()){
-                throw new UserAlreadyExistsException("User with email " + userDto.getEmail() + " already exists.");
-            }
 
-            // If not, create and save the new user
-            User user = new User();
-            user.setFirstName(userDto.getFirstName());
-            user.setLastName(userDto.getLastName());
-            user.setEmail(userDto.getEmail());
-            // encrypt the password using spring security
-            user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        // Check if a user with this email already exists
 
-            return userRepository.save(user);
-        }catch (Exception e){
-            throw new RuntimeException("An error occurred while saving the user: " + e.getMessage());
+        if(userRepository.findByEmail(userDto.getEmail()).isPresent()){
+            throw new UserAlreadyExistsException("User with email " + userDto.getEmail() + " already exists.");
         }
+
+        // If not, create and save the new user
+        User user = new User();
+        user.setFirstName(userDto.getFirstName());
+        user.setLastName(userDto.getLastName());
+        user.setEmail(userDto.getEmail());
+        // encrypt the password using spring security
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+
+        return userRepository.save(user);
+
     }
 
     @Override

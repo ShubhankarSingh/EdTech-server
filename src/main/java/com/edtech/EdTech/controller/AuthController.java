@@ -41,7 +41,7 @@ public class AuthController {
             User user = userService.saveUser(userDto);
             return ResponseEntity.ok("Registration Successful");
         }catch(UserAlreadyExistsException e){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("An error occurred: " + e.getMessage());
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
         }

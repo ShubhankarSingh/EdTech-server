@@ -66,7 +66,6 @@ public class SecurityConfig {
                                 .requestMatchers("/courses/**").permitAll()
                                 .anyRequest().authenticated()
                 ).build();
-
     }
 
 }
