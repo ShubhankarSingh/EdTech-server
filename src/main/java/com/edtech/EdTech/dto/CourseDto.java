@@ -23,6 +23,6 @@ public class CourseDto {
     private String description;
     private String language;
     private LocalDate createdDate;
-    private Long categoryId;
+    private Long id;
 
 }

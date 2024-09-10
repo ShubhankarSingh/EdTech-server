@@ -24,6 +24,7 @@ public class CourseController {
 
     @PostMapping("/add-course")
     public ResponseEntity<?> addCourse(@RequestBody CourseDto courseDto){
+        System.out.println("Course data : " + courseDto);
         try{
             Course theCourse = courseService.addNewCourse(courseDto);
             return ResponseEntity.ok(theCourse);

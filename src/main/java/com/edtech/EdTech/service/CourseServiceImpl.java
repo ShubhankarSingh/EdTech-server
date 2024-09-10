@@ -30,8 +30,8 @@ public class CourseServiceImpl implements CourseService {
             theCourse.setLanguage(courseDto.getLanguage());
             theCourse.setCreatedDate(courseDto.getCreatedDate());
 
-            Category category = categoryRepository.findById(courseDto.getCategoryId())
-                    .orElseThrow(()-> new RuntimeException("Category not found with ID: " + courseDto.getCategoryId()));
+            Category category = categoryRepository.findById(courseDto.getId())
+                    .orElseThrow(()-> new RuntimeException("Category not found with ID: " + courseDto.getId()));
             theCourse.setCategory(category);
 
             return courseRepository.save(theCourse);
@@ -92,8 +92,8 @@ public class CourseServiceImpl implements CourseService {
             if(courseDto.getLanguage() != null) theCourse.setLanguage(courseDto.getLanguage());
             if(courseDto.getCreatedDate() != null) theCourse.setCreatedDate(courseDto.getCreatedDate());
 
-            Category category = categoryRepository.findById(courseDto.getCategoryId())
-                    .orElseThrow(()-> new RuntimeException("Category not found with ID: " + courseDto.getCategoryId()));
+            Category category = categoryRepository.findById(courseDto.getId())
+                    .orElseThrow(()-> new RuntimeException("Category not found with ID: " + courseDto.getId()));
             theCourse.setCategory(category);
 
             return courseRepository.save(theCourse);

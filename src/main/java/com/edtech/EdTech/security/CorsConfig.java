@@ -10,10 +10,6 @@ import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
 
-/**
- * @author Simpson Alfred
- */
-
 @Configuration
 public class CorsConfig {
 
