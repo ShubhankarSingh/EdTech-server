@@ -6,6 +6,7 @@ import com.edtech.EdTech.exception.ItemNotFoundException;
 import com.edtech.EdTech.model.courses.Category;
 import com.edtech.EdTech.model.courses.Course;
 import com.edtech.EdTech.service.CourseService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin("http://localhost:5173/")
 @RequestMapping("/courses")
 public class CourseController {
 
@@ -23,8 +25,7 @@ public class CourseController {
     private final CourseService courseService;
 
     @PostMapping("/add-course")
-    public ResponseEntity<?> addCourse(@RequestBody CourseDto courseDto){
-        System.out.println("Course data : " + courseDto);
+    public ResponseEntity<?> addCourse(@Valid @RequestBody CourseDto courseDto){
         try{
             Course theCourse = courseService.addNewCourse(courseDto);
             return ResponseEntity.ok(theCourse);

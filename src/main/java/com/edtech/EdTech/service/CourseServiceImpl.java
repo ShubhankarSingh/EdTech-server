@@ -21,23 +21,21 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Course addNewCourse(CourseDto courseDto) {
-        try{
-            Course theCourse = new Course();
-            theCourse.setAuthor(courseDto.getAuthor());
-            theCourse.setTitle(courseDto.getTitle());
-            theCourse.setShortDescription(courseDto.getShortDescription());
-            theCourse.setDescription(courseDto.getDescription());
-            theCourse.setLanguage(courseDto.getLanguage());
-            theCourse.setCreatedDate(courseDto.getCreatedDate());
 
-            Category category = categoryRepository.findById(courseDto.getId())
-                    .orElseThrow(()-> new RuntimeException("Category not found with ID: " + courseDto.getId()));
-            theCourse.setCategory(category);
+        Course theCourse = new Course();
+        theCourse.setAuthor(courseDto.getAuthor());
+        theCourse.setTitle(courseDto.getTitle());
+        theCourse.setShortDescription(courseDto.getShortDescription());
+        theCourse.setDescription(courseDto.getDescription());
+        theCourse.setLanguage(courseDto.getLanguage());
+        theCourse.setCreatedDate(courseDto.getCreatedDate());
 
-            return courseRepository.save(theCourse);
-        }catch (Exception e){
-            throw new RuntimeException("An error occurred while saving the course: " + e.getMessage());
-        }
+        Category category = categoryRepository.findById(courseDto.getId())
+                .orElseThrow(()-> new RuntimeException("Category not found with ID: " + courseDto.getId()));
+        theCourse.setCategory(category);
+
+        return courseRepository.save(theCourse);
+
     }
 
     @Override
@@ -49,7 +47,7 @@ public class CourseServiceImpl implements CourseService {
     public List<Course> getAllCoursesByCategory(String category) {
         Category theCategory = categoryRepository.findByCategoryType(category);
         if(theCategory == null){
-            throw new ItemNotFoundException("We can’t find the page you’re looking for.");
+            throw new ItemNotFoundException("We can’t find the page  looking for.");
         }
         List<Course> courses = courseRepository.findCoursesByCategoryId(theCategory.getId());
 
