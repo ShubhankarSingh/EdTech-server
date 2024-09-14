@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 
 @Getter
@@ -39,5 +40,11 @@ public class CourseDto {
 
     @NotNull(message = "Category is required")
     private Long id;
+
+    // Field for the thumbnail image
+    private byte[] thumbnail;
+
+    // List of video URLs or video DTOs
+    private List<VideoDto> videos;
 
 }
