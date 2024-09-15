@@ -1,5 +1,6 @@
 package com.edtech.EdTech.model.courses;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,5 +26,6 @@ public class Video {
 
     @ManyToOne
     @JoinColumn(name = "course_id")
+    @JsonIgnore
     private Course course;
 }

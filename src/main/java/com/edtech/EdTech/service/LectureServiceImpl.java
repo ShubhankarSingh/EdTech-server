@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class LectureServiceImpl implements LectureService{
@@ -27,5 +29,10 @@ public class LectureServiceImpl implements LectureService{
 
         video.setCourse(theCourse);
         return lectureRespository.save(video);
+    }
+
+    @Override
+    public List<Video> getAllLectures() {
+        return lectureRespository.findAll();
     }
 }

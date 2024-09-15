@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -76,4 +77,15 @@ public class LectureController {
         return fileName;
     }
 
+
+    @GetMapping("/{courseId}/all-lectures")
+    public ResponseEntity<?> getAllLectures(){
+
+        try{
+            List<Video> lectures = lectureService.getAllLectures();
+            return ResponseEntity.ok(lectures);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 }
