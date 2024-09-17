@@ -8,7 +8,12 @@ import com.edtech.EdTech.repository.CategoryRepository;
 import com.edtech.EdTech.repository.CourseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.sql.rowset.serial.SerialBlob;
+import java.io.IOException;
+import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,7 +25,7 @@ public class CourseServiceImpl implements CourseService {
     private final CategoryRepository categoryRepository;
 
     @Override
-    public Course addNewCourse(CourseDto courseDto) {
+    public Course addNewCourse(CourseDto courseDto, MultipartFile thumbnail) throws IOException, SQLException {
 
         Course theCourse = new Course();
         theCourse.setAuthor(courseDto.getAuthor());
@@ -33,6 +38,12 @@ public class CourseServiceImpl implements CourseService {
         Category category = categoryRepository.findById(courseDto.getId())
                 .orElseThrow(()-> new RuntimeException("Category not found with ID: " + courseDto.getId()));
         theCourse.setCategory(category);
+
+        if(!thumbnail.isEmpty()){
+            byte[] photo = thumbnail.getBytes();
+            Blob photoBlob = new SerialBlob(photo);
+            theCourse.setThumbnail(photoBlob);
+        }
 
         return courseRepository.save(theCourse);
 
@@ -52,6 +63,18 @@ public class CourseServiceImpl implements CourseService {
         List<Course> courses = courseRepository.findCoursesByCategoryId(theCategory.getId());
 
         return courses;
+    }
+
+    @Override
+    public byte[] getThumbnailByCourseId(Long courseId) throws SQLException {
+        Course theCourse = courseRepository.findById(courseId)
+                .orElseThrow(()-> new ItemNotFoundException("No course found with id: " + courseId));
+
+        Blob photoBlob = theCourse.getThumbnail();
+        if(photoBlob != null){
+            return photoBlob.getBytes(1, (int) photoBlob.length());
+        }
+        return null;
     }
 
     @Override

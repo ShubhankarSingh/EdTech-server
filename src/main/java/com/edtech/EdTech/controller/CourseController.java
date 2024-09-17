@@ -11,7 +11,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import org.apache.tomcat.util.codec.binary.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,13 +31,28 @@ public class CourseController {
     private final CourseService courseService;
 
     @PostMapping("/add-course")
-    public ResponseEntity<?> addCourse(@Valid @RequestBody CourseDto courseDto){
-        try{
-            Course theCourse = courseService.addNewCourse(courseDto);
-            return ResponseEntity.ok(theCourse);
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
+    public ResponseEntity<?> addCourse(@Valid
+            @RequestParam("author") String author,
+            @RequestParam("title") String title,
+            @RequestParam("description") String description,
+            @RequestParam("shortDescription") String shortDescription,
+            @RequestParam("language") String language,
+            @RequestParam("createdDate") LocalDate createdDate,
+            @RequestParam("id") Long categoryId,
+            @RequestParam("thumbnail") MultipartFile thumbnail) throws IOException, SQLException {
+
+        CourseDto courseDto = new CourseDto();
+        courseDto.setAuthor(author);
+        courseDto.setTitle(title);
+        courseDto.setDescription(description);
+        courseDto.setShortDescription(shortDescription);
+        courseDto.setLanguage(language);
+        courseDto.setCreatedDate(createdDate);
+        courseDto.setId(categoryId);
+
+        Course savedCourse = courseService.addNewCourse(courseDto, thumbnail);
+
+        return ResponseEntity.ok(savedCourse);
     }
 
     //Get all courses by category
@@ -39,7 +60,30 @@ public class CourseController {
     public ResponseEntity<?> getAllCoursesByCategory(@PathVariable String category){
         try {
             List<Course> courses = courseService.getAllCoursesByCategory(category);
-            return ResponseEntity.ok(courses);
+
+            List<CourseDto> result = new ArrayList<>();
+            for(Course course: courses ){
+
+                byte[] photoBytes = courseService.getThumbnailByCourseId(course.getId());
+                CourseDto courseDto = new CourseDto();
+                courseDto.setId(course.getCategory().getId());
+                courseDto.setTitle(course.getTitle());
+                courseDto.setAuthor(course.getAuthor());
+                courseDto.setShortDescription(course.getShortDescription());
+                courseDto.setDescription(course.getDescription());
+                courseDto.setLanguage(course.getLanguage());
+                courseDto.setCreatedDate(course.getCreatedDate());
+                courseDto.setVideos(course.getVideos());
+
+                if (photoBytes != null && photoBytes.length > 0) {
+                    String base64Photo = Base64.encodeBase64String(photoBytes);
+                    courseDto.setThumbnail(base64Photo);
+                }
+
+                result.add(courseDto);
+
+            }
+            return ResponseEntity.ok(result);
         }catch (ItemNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }

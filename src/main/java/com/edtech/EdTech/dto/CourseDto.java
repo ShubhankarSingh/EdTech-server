@@ -1,6 +1,7 @@
 package com.edtech.EdTech.dto;
 
 import com.edtech.EdTech.model.courses.Category;
+import com.edtech.EdTech.model.courses.Video;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -10,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Blob;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -42,9 +44,9 @@ public class CourseDto {
     private Long id;
 
     // Field for the thumbnail image
-    private byte[] thumbnail;
+    private String thumbnail;
 
     // List of video URLs or video DTOs
-    private List<VideoDto> videos;
+    private List<Video> videos;
 
 }

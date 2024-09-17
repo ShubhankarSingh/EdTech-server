@@ -9,6 +9,10 @@ import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.List;
 
 @Service
@@ -32,7 +36,18 @@ public class LectureServiceImpl implements LectureService{
     }
 
     @Override
-    public List<Video> getAllLectures() {
-        return lectureRespository.findAll();
+    public List<Video> getAllLectures(Long courseId) {
+        Course theCourse = courseRepository.findById(courseId)
+                .orElseThrow(()-> new RuntimeException("No course found, Please go to your course to add lectures"));
+        List<Video> lectures = theCourse.getVideos();
+        return lectures;
+    }
+
+    @Override
+    public InputStream getResource(String path, String fileName, Long videoId) throws FileNotFoundException {
+        String fullPath = path+File.separator+fileName;
+        System.out.println("/n/n" + fullPath + "/n/n/n");
+        InputStream inputStream = new FileInputStream(fullPath);
+        return inputStream ;
     }
 }

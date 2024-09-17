@@ -3,6 +3,8 @@ package com.edtech.EdTech.model.courses;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+
+import java.sql.Blob;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -43,7 +45,7 @@ public class Course {
 
     @Lob
     @Column(name = "thumbnail")
-    private byte[] thumbnail;
+    private Blob thumbnail;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Video> videos;
