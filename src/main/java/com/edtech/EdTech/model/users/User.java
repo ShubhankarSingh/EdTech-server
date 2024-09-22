@@ -1,11 +1,13 @@
 package com.edtech.EdTech.model.users;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +34,11 @@ public class User {
 
     @Column(name = "password", nullable = false)
     private String password;
+
+    @Lob
+    @JsonIgnore
+    @Column(name = "profile")
+    private Blob profilePicture;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(

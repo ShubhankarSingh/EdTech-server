@@ -11,7 +11,12 @@ import jakarta.transaction.Transactional;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.sql.rowset.serial.SerialBlob;
+import java.io.IOException;
+import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -36,7 +41,6 @@ public class UserServiceImpl implements UserService {
     public User saveUser(UserDto userDto) {
 
         // Check if a user with this email already exists
-
         if(userRepository.findByEmail(userDto.getEmail()).isPresent()){
             throw new UserAlreadyExistsException("User with email " + userDto.getEmail() + " already exists.");
         }
@@ -50,7 +54,6 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
         return userRepository.save(user);
-
     }
 
     @Override
@@ -62,12 +65,45 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDisplayDto findUserById(Long userId) {
+        User theUser = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return mapToUserDto(theUser);
+    }
+
+    @Override
     public List<UserDisplayDto> findAllUsers() {
         List<User> users = userRepository.findAll();
 
         return users.stream()
                 .map(this::mapToUserDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public User updateUserProfile(Long userId, MultipartFile profilePicture) throws IOException, SQLException {
+
+        User theUser = userRepository.findById(userId)
+                .orElseThrow(()-> new UsernameNotFoundException("User not found"));
+
+        if(!profilePicture.isEmpty()){
+            byte[] photoBytes = profilePicture.getBytes();
+            Blob photoBlob = new SerialBlob(photoBytes);
+            theUser.setProfilePicture(photoBlob);
+        }
+        return userRepository.save(theUser);
+    }
+
+    @Override
+    public byte[] getProfilePictureByUserId(Long userId) throws SQLException {
+        User theUser = userRepository.findById(userId)
+                .orElseThrow(()-> new UsernameNotFoundException("User not found"));
+
+        Blob photoBlob = theUser.getProfilePicture();
+        if(photoBlob != null){
+            return photoBlob.getBytes(1, (int) photoBlob.length());
+        }
+        return null;
     }
 
     @Transactional

@@ -1,10 +1,12 @@
 package com.edtech.EdTech.controller;
 
+import com.edtech.EdTech.dto.JwtResponse;
 import com.edtech.EdTech.dto.LoginDto;
 import com.edtech.EdTech.dto.UserDto;
 import com.edtech.EdTech.exception.UserAlreadyExistsException;
 import com.edtech.EdTech.model.users.User;
 import com.edtech.EdTech.security.jwt.JwtUtils;
+import com.edtech.EdTech.security.user.CustomUserDetails;
 import com.edtech.EdTech.service.UserService;
 import jakarta.validation.Valid;
 import lombok.Getter;
@@ -57,10 +59,15 @@ public class AuthController {
 
             // Generate JWT Token
             String token = jwtUtils.generateToken(authentication);
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
-            return ResponseEntity.ok("Bearer " + token);
+            return ResponseEntity.ok(new JwtResponse(
+                    userDetails.getId(),
+                    userDetails.getEmail(),
+                    token
+            ));
         }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password " + e.getMessage() + ".");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage() + ":" + " Invalid email or password.");
         }
     }
 

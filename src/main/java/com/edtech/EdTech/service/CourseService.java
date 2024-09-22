@@ -16,7 +16,6 @@ public interface CourseService {
     Course addNewCourse(CourseDto courseDto, MultipartFile thumbnail) throws IOException, SQLException;
     List<Course> getAllCourses();
     List<Course> getAllCoursesByCategory(String category);
-
     byte[] getThumbnailByCourseId(Long courseId) throws SQLException;
     Optional<Course> getCourseById();
 

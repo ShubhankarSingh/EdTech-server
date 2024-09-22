@@ -25,4 +25,6 @@ public class UserDisplayDto {
 
     private String email;
 
+    private String profilePicture;
+
 }
