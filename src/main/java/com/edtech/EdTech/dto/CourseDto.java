@@ -2,6 +2,7 @@ package com.edtech.EdTech.dto;
 
 import com.edtech.EdTech.model.courses.Category;
 import com.edtech.EdTech.model.courses.Video;
+import com.edtech.EdTech.model.users.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -26,7 +27,7 @@ public class CourseDto {
     private String title;
 
     @NotEmpty(message = "Author is required")
-    private String author;
+    private User author;
 
     @NotEmpty(message = "Short Description is required")
     private String shortDescription;

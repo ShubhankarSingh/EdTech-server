@@ -1,5 +1,6 @@
 package com.edtech.EdTech.model.courses;
 
+import com.edtech.EdTech.model.users.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -23,9 +24,9 @@ public class Course {
     @Size(min=3, max=100)
     private String title;
 
-    @Column(name = "course_author", nullable = false)
-    @Size(max=50)
-    private String author;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="user_id")
+    private User author;
 
     @Size(max=200)
     private String shortDescription;

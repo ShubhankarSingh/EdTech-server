@@ -24,18 +24,18 @@ public class UserController {
     private UserService userService;
 
     // API to fetch a single user from the DB using id or email
-    @GetMapping("/user/{email}")
-    public ResponseEntity<?> findUserByEmail(@PathVariable("email") String email){
-
-        try {
-            UserDisplayDto theUser = userService.findUserByEmail(email);
-            return ResponseEntity.ok(theUser);
-        }catch (UsernameNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching user: " + e.getMessage());
-        }
-    }
+//    @GetMapping("/user/{email}")
+//    public ResponseEntity<?> findUserByEmail(@PathVariable("email") String email){
+//
+//        try {
+//            UserDisplayDto theUser = userService.findUserByEmail(email);
+//            return ResponseEntity.ok(theUser);
+//        }catch (UsernameNotFoundException e){
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+//        }catch (Exception e){
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching user: " + e.getMessage());
+//        }
+//    }
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<?> findUserById(@PathVariable("userId") Long userId){

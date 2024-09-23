@@ -5,11 +5,15 @@ import com.edtech.EdTech.dto.CourseDto;
 import com.edtech.EdTech.exception.ItemNotFoundException;
 import com.edtech.EdTech.model.courses.Category;
 import com.edtech.EdTech.model.courses.Course;
+import com.edtech.EdTech.model.users.User;
+import com.edtech.EdTech.repository.UserRepository;
 import com.edtech.EdTech.service.CourseService;
+import com.edtech.EdTech.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,10 +33,12 @@ public class CourseController {
 
 
     private final CourseService courseService;
+    private final UserService userService;
+    private final UserRepository userRepository;
 
     @PostMapping("/add-course")
     public ResponseEntity<?> addCourse(@Valid
-            @RequestParam("author") String author,
+            @RequestParam("userId") Long userId,
             @RequestParam("title") String title,
             @RequestParam("description") String description,
             @RequestParam("shortDescription") String shortDescription,
@@ -41,8 +47,11 @@ public class CourseController {
             @RequestParam("id") Long categoryId,
             @RequestParam("thumbnail") MultipartFile thumbnail) throws IOException, SQLException {
 
+        User theUser = userRepository.findById(userId)
+                .orElseThrow(()-> new UsernameNotFoundException("User not found"));
+
         CourseDto courseDto = new CourseDto();
-        courseDto.setAuthor(author);
+        courseDto.setAuthor(theUser);
         courseDto.setTitle(title);
         courseDto.setDescription(description);
         courseDto.setShortDescription(shortDescription);

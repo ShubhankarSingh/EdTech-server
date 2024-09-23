@@ -1,5 +1,6 @@
 package com.edtech.EdTech.model.users;
 
+import com.edtech.EdTech.model.courses.Course;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -46,5 +47,8 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private List<Role> roles = new ArrayList<>();
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Course> courses = new ArrayList<>();
 
 }
