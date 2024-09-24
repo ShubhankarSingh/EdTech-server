@@ -2,6 +2,7 @@ package com.edtech.EdTech.controller;
 
 
 import com.edtech.EdTech.dto.CourseDto;
+import com.edtech.EdTech.dto.UserDisplayDto;
 import com.edtech.EdTech.exception.ItemNotFoundException;
 import com.edtech.EdTech.model.courses.Category;
 import com.edtech.EdTech.model.courses.Course;
@@ -9,6 +10,7 @@ import com.edtech.EdTech.model.users.User;
 import com.edtech.EdTech.repository.UserRepository;
 import com.edtech.EdTech.service.CourseService;
 import com.edtech.EdTech.service.UserService;
+import com.edtech.EdTech.service.UserServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -34,6 +36,7 @@ public class CourseController {
 
     private final CourseService courseService;
     private final UserService userService;
+    private final UserServiceImpl userServiceImpl;
     private final UserRepository userRepository;
 
     @PostMapping("/add-course")
@@ -51,7 +54,7 @@ public class CourseController {
                 .orElseThrow(()-> new UsernameNotFoundException("User not found"));
 
         CourseDto courseDto = new CourseDto();
-        courseDto.setAuthor(theUser);
+        courseDto.setUserId(theUser.getId());
         courseDto.setTitle(title);
         courseDto.setDescription(description);
         courseDto.setShortDescription(shortDescription);
@@ -77,7 +80,9 @@ public class CourseController {
                 CourseDto courseDto = new CourseDto();
                 courseDto.setId(course.getCategory().getId());
                 courseDto.setTitle(course.getTitle());
-                courseDto.setAuthor(course.getAuthor());
+
+                UserDisplayDto userDisplayDto = userServiceImpl.mapToUserDto(course.getAuthor());
+                courseDto.setAuthor(userDisplayDto);
                 courseDto.setShortDescription(course.getShortDescription());
                 courseDto.setDescription(course.getDescription());
                 courseDto.setLanguage(course.getLanguage());

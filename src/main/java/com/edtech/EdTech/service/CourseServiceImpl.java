@@ -4,9 +4,12 @@ import com.edtech.EdTech.dto.CourseDto;
 import com.edtech.EdTech.exception.ItemNotFoundException;
 import com.edtech.EdTech.model.courses.Category;
 import com.edtech.EdTech.model.courses.Course;
+import com.edtech.EdTech.model.users.User;
 import com.edtech.EdTech.repository.CategoryRepository;
 import com.edtech.EdTech.repository.CourseRepository;
+import com.edtech.EdTech.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,13 +25,19 @@ import java.util.Optional;
 public class CourseServiceImpl implements CourseService {
 
     private final CourseRepository courseRepository;
+    private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
 
     @Override
     public Course addNewCourse(CourseDto courseDto, MultipartFile thumbnail) throws IOException, SQLException {
 
+
+        User theUser = userRepository.findById(courseDto.getUserId())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+
         Course theCourse = new Course();
-        theCourse.setAuthor(courseDto.getAuthor());
+        theCourse.setAuthor(theUser);
         theCourse.setTitle(courseDto.getTitle());
         theCourse.setShortDescription(courseDto.getShortDescription());
         theCourse.setDescription(courseDto.getDescription());
@@ -105,7 +114,7 @@ public class CourseServiceImpl implements CourseService {
             Course theCourse = courseRepository.findById(courseId)
                     .orElseThrow(()-> new ItemNotFoundException("No course found with id: " + courseId));
 
-            if(courseDto.getAuthor() != null) theCourse.setAuthor(courseDto.getAuthor());
+//            if(courseDto.getAuthor() != null) theCourse.setAuthor(courseDto.getAuthor());
             if(courseDto.getTitle() != null) theCourse.setTitle(courseDto.getTitle());
             if(courseDto.getDescription() != null) theCourse.setDescription(courseDto.getDescription());
             if(courseDto.getShortDescription() != null) theCourse.setShortDescription(courseDto.getShortDescription());

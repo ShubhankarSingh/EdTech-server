@@ -27,7 +27,9 @@ public class CourseDto {
     private String title;
 
     @NotEmpty(message = "Author is required")
-    private User author;
+    private Long userId;
+
+    private UserDisplayDto author;
 
     @NotEmpty(message = "Short Description is required")
     private String shortDescription;

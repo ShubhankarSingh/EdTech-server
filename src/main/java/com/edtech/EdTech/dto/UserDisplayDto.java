@@ -19,12 +19,10 @@ import java.util.Set;
 @AllArgsConstructor
 public class UserDisplayDto {
 
+    private Long id;
     private String firstName;
-
     private String lastName;
-
     private String email;
-
     private String profilePicture;
 
 }

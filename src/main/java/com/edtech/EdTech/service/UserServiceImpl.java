@@ -8,6 +8,8 @@ import com.edtech.EdTech.model.users.User;
 import com.edtech.EdTech.repository.RoleRepository;
 import com.edtech.EdTech.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.apache.tomcat.util.codec.binary.Base64;
+import org.hibernate.annotations.processing.SQL;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -115,11 +117,22 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(user);
     }
 
-    private UserDisplayDto mapToUserDto(User user) {
+    public UserDisplayDto mapToUserDto(User user) {
         UserDisplayDto userDto = new UserDisplayDto();
+        userDto.setId(user.getId());
         userDto.setFirstName(user.getFirstName());
         userDto.setLastName(user.getLastName());
         userDto.setEmail(user.getEmail());
+
+        try {
+            byte[] photoBytes = this.getProfilePictureByUserId(user.getId());
+            if (photoBytes != null && photoBytes.length > 0) {
+                String base64Photo = Base64.encodeBase64String(photoBytes);
+                userDto.setProfilePicture(base64Photo);
+            }
+        }catch(SQLException e){
+            System.err.println("Error retrieving profile picture: " + e.getMessage());
+        }
         return userDto;
     }
 }
