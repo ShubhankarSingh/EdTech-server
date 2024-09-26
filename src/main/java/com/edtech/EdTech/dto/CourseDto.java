@@ -23,6 +23,8 @@ import java.util.List;
 @AllArgsConstructor
 public class CourseDto {
 
+    private Long courseId;
+
     @NotEmpty(message = "Title is required")
     private String title;
 
@@ -44,7 +46,7 @@ public class CourseDto {
     private LocalDate createdDate;
 
     @NotNull(message = "Category is required")
-    private Long id;
+    private Long categoryId;
 
     // Field for the thumbnail image
     private String thumbnail;

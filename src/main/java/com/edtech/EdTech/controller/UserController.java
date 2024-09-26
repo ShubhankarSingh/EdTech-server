@@ -40,7 +40,10 @@ public class UserController {
     @GetMapping("/user/{userId}")
     public ResponseEntity<?> findUserById(@PathVariable("userId") Long userId){
         try {
+
             UserDisplayDto theUser = userService.findUserById(userId);
+
+            System.out.println("\n\n\n theUser: " + theUser.getCourses() + "\n\n\n");
 
             byte[] photoBytes = userService.getProfilePictureByUserId(userId);
 

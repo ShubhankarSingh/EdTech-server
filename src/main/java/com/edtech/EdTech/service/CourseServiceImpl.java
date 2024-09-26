@@ -44,8 +44,8 @@ public class CourseServiceImpl implements CourseService {
         theCourse.setLanguage(courseDto.getLanguage());
         theCourse.setCreatedDate(courseDto.getCreatedDate());
 
-        Category category = categoryRepository.findById(courseDto.getId())
-                .orElseThrow(()-> new RuntimeException("Category not found with ID: " + courseDto.getId()));
+        Category category = categoryRepository.findById(courseDto.getCategoryId())
+                .orElseThrow(()-> new RuntimeException("Category not found with ID: " + courseDto.getCategoryId()));
         theCourse.setCategory(category);
 
         if(!thumbnail.isEmpty()){
@@ -86,8 +86,12 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Optional<Course> getCourseById() {
-        return Optional.empty();
+    public Optional<Course> getCourseById(Long id) {
+        Optional<Course> theCourse = courseRepository.findById(id);
+        if(theCourse.isEmpty()){
+            throw new ItemNotFoundException("We can’t find the page you’re looking for.");
+        }
+        return theCourse;
     }
 
     @Override
@@ -121,8 +125,8 @@ public class CourseServiceImpl implements CourseService {
             if(courseDto.getLanguage() != null) theCourse.setLanguage(courseDto.getLanguage());
             if(courseDto.getCreatedDate() != null) theCourse.setCreatedDate(courseDto.getCreatedDate());
 
-            Category category = categoryRepository.findById(courseDto.getId())
-                    .orElseThrow(()-> new RuntimeException("Category not found with ID: " + courseDto.getId()));
+            Category category = categoryRepository.findById(courseDto.getCategoryId())
+                    .orElseThrow(()-> new RuntimeException("Category not found with ID: " + courseDto.getCategoryId()));
             theCourse.setCategory(category);
 
             return courseRepository.save(theCourse);

@@ -60,7 +60,7 @@ public class CourseController {
         courseDto.setShortDescription(shortDescription);
         courseDto.setLanguage(language);
         courseDto.setCreatedDate(createdDate);
-        courseDto.setId(categoryId);
+        courseDto.setCategoryId(categoryId);
 
         Course savedCourse = courseService.addNewCourse(courseDto, thumbnail);
 
@@ -78,16 +78,17 @@ public class CourseController {
 
                 byte[] photoBytes = courseService.getThumbnailByCourseId(course.getId());
                 CourseDto courseDto = new CourseDto();
-                courseDto.setId(course.getCategory().getId());
+                courseDto.setCourseId(course.getId());
+                courseDto.setCategoryId(course.getCategory().getId());
                 courseDto.setTitle(course.getTitle());
 
                 UserDisplayDto userDisplayDto = userServiceImpl.mapToUserDto(course.getAuthor());
                 courseDto.setAuthor(userDisplayDto);
                 courseDto.setShortDescription(course.getShortDescription());
-                courseDto.setDescription(course.getDescription());
-                courseDto.setLanguage(course.getLanguage());
-                courseDto.setCreatedDate(course.getCreatedDate());
-                courseDto.setVideos(course.getVideos());
+                //courseDto.setDescription(course.getDescription());
+                //courseDto.setLanguage(course.getLanguage());
+                //courseDto.setCreatedDate(course.getCreatedDate());
+                //courseDto.setVideos(course.getVideos());
 
                 if (photoBytes != null && photoBytes.length > 0) {
                     String base64Photo = Base64.encodeBase64String(photoBytes);
@@ -107,11 +108,64 @@ public class CourseController {
     }
 
     // Get a course by title
-    @GetMapping("/course/{title}")
+    @GetMapping("/course/{title:[a-zA-Z]+}")
     public ResponseEntity<?> getCourseByTitle(@PathVariable String title){
         try{
-            Optional<Course> theCourse = courseService.getCourseByTitle(title);
-            return ResponseEntity.ok(theCourse);
+            Optional<Course> course = courseService.getCourseByTitle(title);
+
+            byte[] photoBytes = courseService.getThumbnailByCourseId(course.get().getId());
+            CourseDto courseDto = new CourseDto();
+            courseDto.setCourseId(course.get().getId());
+            courseDto.setCategoryId(course.get().getCategory().getId());
+            courseDto.setTitle(course.get().getTitle());
+
+            UserDisplayDto userDisplayDto = userServiceImpl.mapToUserDto(course.get().getAuthor());
+            courseDto.setAuthor(userDisplayDto);
+            courseDto.setShortDescription(course.get().getShortDescription());
+            courseDto.setDescription(course.get().getDescription());
+            courseDto.setLanguage(course.get().getLanguage());
+            courseDto.setCreatedDate(course.get().getCreatedDate());
+            courseDto.setVideos(course.get().getVideos());
+
+            if (photoBytes != null && photoBytes.length > 0) {
+                String base64Photo = Base64.encodeBase64String(photoBytes);
+                courseDto.setThumbnail(base64Photo);
+            }
+
+            return ResponseEntity.ok(course);
+        }catch (ItemNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/course/{id:[0-9]+}")
+    public ResponseEntity<?> getCourseByTitle(@PathVariable Long id){
+        try{
+            Optional<Course> course = courseService.getCourseById(id);
+
+            byte[] photoBytes = courseService.getThumbnailByCourseId(course.get().getId());
+            CourseDto courseDto = new CourseDto();
+            courseDto.setCourseId(course.get().getId());
+            courseDto.setCategoryId(course.get().getCategory().getId());
+            courseDto.setTitle(course.get().getTitle());
+
+            UserDisplayDto userDisplayDto = userServiceImpl.mapToUserDto(course.get().getAuthor());
+            courseDto.setAuthor(userDisplayDto);
+            courseDto.setShortDescription(course.get().getShortDescription());
+            courseDto.setDescription(course.get().getDescription());
+            courseDto.setLanguage(course.get().getLanguage());
+            courseDto.setCreatedDate(course.get().getCreatedDate());
+            courseDto.setVideos(course.get().getVideos());
+
+            if (photoBytes != null && photoBytes.length > 0) {
+                String base64Photo = Base64.encodeBase64String(photoBytes);
+                courseDto.setThumbnail(base64Photo);
+            }
+
+            return ResponseEntity.ok(course);
         }catch (ItemNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
@@ -124,6 +178,7 @@ public class CourseController {
     public ResponseEntity<?> updateCourse(@PathVariable Long courseId, @RequestBody CourseDto courseDto){
         try{
             Course theCourse = courseService.updateCourse(courseId, courseDto);
+
             return ResponseEntity.ok(theCourse);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

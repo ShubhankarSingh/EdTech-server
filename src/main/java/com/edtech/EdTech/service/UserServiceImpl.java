@@ -1,8 +1,10 @@
 package com.edtech.EdTech.service;
 
+import com.edtech.EdTech.dto.CourseDto;
 import com.edtech.EdTech.dto.UserDisplayDto;
 import com.edtech.EdTech.dto.UserDto;
 import com.edtech.EdTech.exception.UserAlreadyExistsException;
+import com.edtech.EdTech.model.courses.Course;
 import com.edtech.EdTech.model.users.Role;
 import com.edtech.EdTech.model.users.User;
 import com.edtech.EdTech.repository.RoleRepository;
@@ -25,17 +27,18 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
+    private final CourseService courseService;
     private final PasswordEncoder passwordEncoder;
 
     public UserServiceImpl(UserRepository userRepository,
-                           RoleRepository roleRepository,
+                           CourseService courseService,
                            PasswordEncoder passwordEncoder){
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
+        this.courseService = courseService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -124,6 +127,10 @@ public class UserServiceImpl implements UserService {
         userDto.setLastName(user.getLastName());
         userDto.setEmail(user.getEmail());
 
+        List<CourseDto> courses = user.getCourses().stream()
+                        .map(this::mapToCourseDto).collect(Collectors.toList());
+
+        userDto.setCourses(courses);
         try {
             byte[] photoBytes = this.getProfilePictureByUserId(user.getId());
             if (photoBytes != null && photoBytes.length > 0) {
@@ -134,5 +141,22 @@ public class UserServiceImpl implements UserService {
             System.err.println("Error retrieving profile picture: " + e.getMessage());
         }
         return userDto;
+    }
+
+    private CourseDto mapToCourseDto(Course course){
+        CourseDto courseDto = new CourseDto();
+        courseDto.setCourseId(course.getId());
+        courseDto.setTitle(course.getTitle());
+        try{
+            byte[] photoBytes = courseService.getThumbnailByCourseId(course.getId());
+            if (photoBytes != null && photoBytes.length > 0) {
+                String base64Photo = Base64.encodeBase64String(photoBytes);
+               courseDto.setThumbnail(base64Photo);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return courseDto;
     }
 }

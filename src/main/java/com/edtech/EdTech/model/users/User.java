@@ -2,6 +2,7 @@ package com.edtech.EdTech.model.users;
 
 import com.edtech.EdTech.model.courses.Course;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
