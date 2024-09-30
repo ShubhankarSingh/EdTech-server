@@ -35,7 +35,6 @@ public class CourseServiceImpl implements CourseService {
         User theUser = userRepository.findById(courseDto.getUserId())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-
         Course theCourse = new Course();
         theCourse.setAuthor(theUser);
         theCourse.setTitle(courseDto.getTitle());

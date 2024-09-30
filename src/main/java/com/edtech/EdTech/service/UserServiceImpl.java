@@ -52,8 +52,7 @@ public class UserServiceImpl implements UserService {
 
         // If not, create and save the new user
         User user = new User();
-        user.setFirstName(userDto.getFirstName());
-        user.setLastName(userDto.getLastName());
+        user.setName(userDto.getName());
         user.setEmail(userDto.getEmail());
         // encrypt the password using spring security
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
@@ -123,8 +122,7 @@ public class UserServiceImpl implements UserService {
     public UserDisplayDto mapToUserDto(User user) {
         UserDisplayDto userDto = new UserDisplayDto();
         userDto.setId(user.getId());
-        userDto.setFirstName(user.getFirstName());
-        userDto.setLastName(user.getLastName());
+        userDto.setFirstName(user.getName());
         userDto.setEmail(user.getEmail());
 
         List<CourseDto> courses = user.getCourses().stream()

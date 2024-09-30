@@ -35,11 +35,13 @@ public class Course {
     @Size(max=200)
     private String shortDescription;
 
-    @Column(name = "course_description", nullable = false)
+    @Column(name = "course_description", nullable = false, columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "course_language", length = 20)
     private String language;
+
+    private Long price;
 
     @Column(name = "created_date", nullable = false)
     private LocalDate createdDate;
@@ -54,6 +56,9 @@ public class Course {
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Video> videos;
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Review> reviews;
 
     public Course(){
         this.createdDate = LocalDate.now();

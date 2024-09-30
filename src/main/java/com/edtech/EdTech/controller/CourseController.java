@@ -132,7 +132,7 @@ public class CourseController {
                 courseDto.setThumbnail(base64Photo);
             }
 
-            return ResponseEntity.ok(course);
+            return ResponseEntity.ok(courseDto);
         }catch (ItemNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
@@ -142,11 +142,11 @@ public class CourseController {
     }
 
     @GetMapping("/course/{id:[0-9]+}")
-    public ResponseEntity<?> getCourseByTitle(@PathVariable Long id){
+    public ResponseEntity<?> getCourseById(@PathVariable Long id){
         try{
             Optional<Course> course = courseService.getCourseById(id);
 
-            byte[] photoBytes = courseService.getThumbnailByCourseId(course.get().getId());
+            byte[] photoBytes = courseService.getThumbnailByCourseId(id);
             CourseDto courseDto = new CourseDto();
             courseDto.setCourseId(course.get().getId());
             courseDto.setCategoryId(course.get().getCategory().getId());
@@ -165,7 +165,7 @@ public class CourseController {
                 courseDto.setThumbnail(base64Photo);
             }
 
-            return ResponseEntity.ok(course);
+            return ResponseEntity.ok(courseDto);
         }catch (ItemNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }

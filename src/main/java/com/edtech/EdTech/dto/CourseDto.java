@@ -1,6 +1,7 @@
 package com.edtech.EdTech.dto;
 
 import com.edtech.EdTech.model.courses.Category;
+import com.edtech.EdTech.model.courses.Review;
 import com.edtech.EdTech.model.courses.Video;
 import com.edtech.EdTech.model.users.User;
 import jakarta.persistence.*;
@@ -53,5 +54,7 @@ public class CourseDto {
 
     // List of video URLs or video DTOs
     private List<Video> videos;
+
+    private List<Review> reviews;
 
 }

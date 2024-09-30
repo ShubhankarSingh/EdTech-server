@@ -18,10 +18,7 @@ import java.util.Set;
 public class UserDto {
 
     @NotEmpty
-    private String firstName;
-
-    @NotEmpty
-    private String lastName;
+    private String name;
 
     @NotEmpty(message = "Email should not be empty")
     private String email;
