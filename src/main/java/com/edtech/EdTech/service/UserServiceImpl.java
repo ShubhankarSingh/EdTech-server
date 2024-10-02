@@ -122,7 +122,7 @@ public class UserServiceImpl implements UserService {
     public UserDisplayDto mapToUserDto(User user) {
         UserDisplayDto userDto = new UserDisplayDto();
         userDto.setId(user.getId());
-        userDto.setFirstName(user.getName());
+        userDto.setName(user.getName());
         userDto.setEmail(user.getEmail());
 
         List<CourseDto> courses = user.getCourses().stream()

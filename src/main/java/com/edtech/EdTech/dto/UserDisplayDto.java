@@ -22,8 +22,7 @@ import java.util.Set;
 public class UserDisplayDto {
 
     private Long id;
-    private String firstName;
-    private String lastName;
+    private String name;
     private String email;
     private String profilePicture;
     private List<CourseDto> courses;
