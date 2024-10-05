@@ -8,5 +8,7 @@ public interface ReviewService {
 
     Review addReview(Review review);
 
+    String deleteReview(Long reviewId);
+
 //    List<Review> getAllReviews(Long courseId);
 }

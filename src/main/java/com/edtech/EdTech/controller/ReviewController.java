@@ -1,5 +1,6 @@
 package com.edtech.EdTech.controller;
 
+import com.edtech.EdTech.exception.ItemNotFoundException;
 import com.edtech.EdTech.model.courses.Review;
 import com.edtech.EdTech.service.ReviewService;
 import jakarta.validation.Valid;
@@ -20,12 +21,22 @@ public class ReviewController {
     @PostMapping("/add-review")
     public ResponseEntity<?> addReview(@Valid @RequestBody Review review){
         try {
-            System.out.println("Review received: " + review.toString());  // Debugging
             Review theReview = reviewService.addReview(review);
             return ResponseEntity.ok(theReview);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().body("Error processing the review: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/delete/{reviewId}")
+    public ResponseEntity<?> deleteReview(@PathVariable Long reviewId){
+
+        try{
+            String message = reviewService.deleteReview(reviewId);
+            return ResponseEntity.ok(message);
+        }catch (ItemNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 

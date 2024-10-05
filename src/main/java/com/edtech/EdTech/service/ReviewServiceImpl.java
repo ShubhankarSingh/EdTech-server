@@ -37,6 +37,14 @@ public class ReviewServiceImpl implements ReviewService{
         return newReview;
     }
 
+    @Override
+    public String deleteReview(Long reviewId) {
+        Review theReview = reviewRepository.findById(reviewId)
+                .orElseThrow(()-> new ItemNotFoundException("Review Not found"));
+        reviewRepository.deleteById(reviewId);
+        return "Review deleted Successfully";
+    }
+
 //    @Override
 //    public List<Review> getAllReviews(Long courseId) {
 //        return reviewRepository.findByCourseId(courseId);
