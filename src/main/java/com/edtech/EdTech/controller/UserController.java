@@ -42,9 +42,6 @@ public class UserController {
         try {
 
             UserDisplayDto theUser = userService.findUserById(userId);
-
-            System.out.println("\n\n\n theUser: " + theUser.getCourses() + "\n\n\n");
-
             byte[] photoBytes = userService.getProfilePictureByUserId(userId);
 
             if(photoBytes != null && photoBytes.length > 0){

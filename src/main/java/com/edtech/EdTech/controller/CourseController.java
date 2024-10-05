@@ -159,6 +159,7 @@ public class CourseController {
             courseDto.setLanguage(course.get().getLanguage());
             courseDto.setCreatedDate(course.get().getCreatedDate());
             courseDto.setVideos(course.get().getVideos());
+            courseDto.setReviews(course.get().getReviews());
 
             if (photoBytes != null && photoBytes.length > 0) {
                 String base64Photo = Base64.encodeBase64String(photoBytes);

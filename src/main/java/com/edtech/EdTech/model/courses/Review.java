@@ -1,5 +1,6 @@
 package com.edtech.EdTech.model.courses;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -28,12 +29,16 @@ public class Review {
     @Size(max = 250)
     private String description;
 
-    private String ratings;
+    private String rating;
 
     private LocalDate timestamp;
 
+    @Transient
+    private Long courseId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id", nullable = false)
+    @JsonIgnore
     private Course course;
 
     public Review() {

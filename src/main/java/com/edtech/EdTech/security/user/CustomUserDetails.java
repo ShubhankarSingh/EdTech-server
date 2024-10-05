@@ -22,6 +22,7 @@ public class CustomUserDetails implements UserDetails{
 
     private Long id;
     private String email;
+    private String name;
     private String password;
 //    private Collection<GrantedAuthority> authorities;
 
@@ -33,6 +34,7 @@ public class CustomUserDetails implements UserDetails{
         return new CustomUserDetails(
                 user.getId(),
                 user.getEmail(),
+                user.getName(),
                 user.getPassword());
     }
 
