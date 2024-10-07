@@ -2,6 +2,7 @@ package com.edtech.EdTech.controller;
 
 
 import com.edtech.EdTech.dto.CourseDto;
+import com.edtech.EdTech.dto.UpdateResponseDto;
 import com.edtech.EdTech.dto.UserDisplayDto;
 import com.edtech.EdTech.exception.ItemNotFoundException;
 import com.edtech.EdTech.model.courses.Category;
@@ -179,8 +180,12 @@ public class CourseController {
     public ResponseEntity<?> updateCourse(@PathVariable Long courseId, @RequestBody CourseDto courseDto){
         try{
             Course theCourse = courseService.updateCourse(courseId, courseDto);
-
-            return ResponseEntity.ok(theCourse);
+            UpdateResponseDto response = new UpdateResponseDto(
+                    "Course updated successfully!",
+                    theCourse.getId(),
+                    theCourse.getTitle()
+            );
+            return ResponseEntity.ok(response);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }

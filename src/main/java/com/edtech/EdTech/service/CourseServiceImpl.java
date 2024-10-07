@@ -122,12 +122,11 @@ public class CourseServiceImpl implements CourseService {
             if(courseDto.getDescription() != null) theCourse.setDescription(courseDto.getDescription());
             if(courseDto.getShortDescription() != null) theCourse.setShortDescription(courseDto.getShortDescription());
             if(courseDto.getLanguage() != null) theCourse.setLanguage(courseDto.getLanguage());
-            if(courseDto.getCreatedDate() != null) theCourse.setCreatedDate(courseDto.getCreatedDate());
-
-            Category category = categoryRepository.findById(courseDto.getCategoryId())
-                    .orElseThrow(()-> new RuntimeException("Category not found with ID: " + courseDto.getCategoryId()));
-            theCourse.setCategory(category);
-
+//            if(courseDto.getCreatedDate() != null) theCourse.setCreatedDate(courseDto.getCreatedDate());
+//
+//            Category category = categoryRepository.findById(courseDto.getCategoryId())
+//                    .orElseThrow(()-> new RuntimeException("Category not found with ID: " + courseDto.getCategoryId()));
+//            theCourse.setCategory(category);
             return courseRepository.save(theCourse);
         }catch (Exception e){
             throw new RuntimeException("An error occurred while saving the course: " + e.getMessage());
