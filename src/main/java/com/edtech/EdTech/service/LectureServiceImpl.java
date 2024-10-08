@@ -38,7 +38,7 @@ public class LectureServiceImpl implements LectureService{
     @Override
     public List<Video> getAllLectures(Long courseId) {
         Course theCourse = courseRepository.findById(courseId)
-                .orElseThrow(()-> new RuntimeException("No course found, Please go to your course to add lectures"));
+                .orElseThrow(()-> new RuntimeException("No course found!"));
         List<Video> lectures = theCourse.getVideos();
         return lectures;
     }
@@ -50,4 +50,15 @@ public class LectureServiceImpl implements LectureService{
         InputStream inputStream = new FileInputStream(fullPath);
         return inputStream ;
     }
+
+    @Override
+    public Video updateLecture(Course theCourse, Video theVideo, VideoDto videoDto) {
+
+        theVideo.setTitle(videoDto.getTitle());
+        theVideo.setUrl(videoDto.getUrl());
+
+        return lectureRespository.save(theVideo);
+    }
+
+
 }

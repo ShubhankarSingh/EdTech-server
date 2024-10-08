@@ -1,7 +1,10 @@
 package com.edtech.EdTech.controller;
 
+import com.edtech.EdTech.dto.UpdateResponseDto;
 import com.edtech.EdTech.dto.VideoDto;
+import com.edtech.EdTech.model.courses.Course;
 import com.edtech.EdTech.model.courses.Video;
+import com.edtech.EdTech.repository.CourseRepository;
 import com.edtech.EdTech.repository.LectureRespository;
 import com.edtech.EdTech.service.LectureService;
 import jakarta.servlet.http.HttpServlet;
@@ -34,6 +37,7 @@ public class LectureController {
 
     private final LectureService lectureService;
     private final LectureRespository lectureRespository;
+    private final CourseRepository courseRepository;
 
     @Value("${project.video}")
     private String path;
@@ -106,6 +110,36 @@ public class LectureController {
             List<Video> lectures = lectureService.getAllLectures(courseId);
             return ResponseEntity.ok(lectures);
         }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/{courseId}/update-lecture/{videoId}")
+    public ResponseEntity<?> updateLecture(@PathVariable Long courseId, @PathVariable Long videoId,
+                                           @RequestParam("title") String title,
+                                           @RequestParam("url") MultipartFile file){
+
+        try{
+
+            Course theCourse = courseRepository.findById(courseId)
+                    .orElseThrow(()-> new RuntimeException("No course found!"));
+
+            Video theVideo = lectureRespository.findById(videoId)
+                    .orElseThrow(()-> new RuntimeException("No video found with id: " + videoId));
+
+            String fileName = saveFile(file);
+
+            VideoDto updatedVideo = new VideoDto();
+            updatedVideo.setUrl(fileName);
+            updatedVideo.setTitle(title);
+
+            Video updatedLecture  = lectureService.updateLecture(theCourse, theVideo ,updatedVideo);
+
+            return ResponseEntity.ok(updatedLecture);
+        }catch(RuntimeException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+        catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }

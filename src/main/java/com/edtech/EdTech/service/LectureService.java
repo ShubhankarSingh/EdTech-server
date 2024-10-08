@@ -1,6 +1,7 @@
 package com.edtech.EdTech.service;
 
 import com.edtech.EdTech.dto.VideoDto;
+import com.edtech.EdTech.model.courses.Course;
 import com.edtech.EdTech.model.courses.Video;
 
 import java.io.FileNotFoundException;
@@ -14,4 +15,6 @@ public interface LectureService {
     List<Video> getAllLectures(Long courseId);
 
     InputStream getResource(String path,String fileName , Long videoId) throws FileNotFoundException ;
+
+    Video updateLecture(Course theCourse, Video theVideo, VideoDto videoDto);
 }
