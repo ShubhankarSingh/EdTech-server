@@ -1,6 +1,7 @@
 package com.edtech.EdTech.service;
 
 import com.edtech.EdTech.dto.VideoDto;
+import com.edtech.EdTech.exception.ItemNotFoundException;
 import com.edtech.EdTech.model.courses.Course;
 import com.edtech.EdTech.model.courses.Video;
 import com.edtech.EdTech.repository.CourseRepository;
@@ -14,6 +15,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -58,6 +60,19 @@ public class LectureServiceImpl implements LectureService{
         theVideo.setUrl(videoDto.getUrl());
 
         return lectureRespository.save(theVideo);
+    }
+
+    @Override
+    public String deleteLecture(Long courseId, Long videoId) {
+
+        Video video = lectureRespository.findById(videoId)
+                .orElseThrow(()-> new ItemNotFoundException("Video Not found with id: " + videoId));
+
+        if(!Objects.equals(video.getCourse().getId(), courseId)){
+            throw new RuntimeException("Video does not belong to the specified course");
+        }
+        lectureRespository.delete(video);
+        return "Lecture deleted successfully!";
     }
 
 

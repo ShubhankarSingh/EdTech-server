@@ -17,4 +17,6 @@ public interface LectureService {
     InputStream getResource(String path,String fileName , Long videoId) throws FileNotFoundException ;
 
     Video updateLecture(Course theCourse, Video theVideo, VideoDto videoDto);
+
+    String deleteLecture(Long courseId, Long videoId);
 }

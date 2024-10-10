@@ -43,6 +43,12 @@ public class CourseDto {
     @NotEmpty(message = "Language is required")
     private String language;
 
+    @NotEmpty(message = "Price should not be empty")
+    private Long originalPrice;
+
+    @NotEmpty(message = "Price should not be empty")
+    private Long offerPrice;
+
     @NotNull(message = "Created Date is required")
     private LocalDate createdDate;
 

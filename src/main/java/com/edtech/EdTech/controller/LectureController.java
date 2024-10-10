@@ -2,6 +2,7 @@ package com.edtech.EdTech.controller;
 
 import com.edtech.EdTech.dto.UpdateResponseDto;
 import com.edtech.EdTech.dto.VideoDto;
+import com.edtech.EdTech.exception.ItemNotFoundException;
 import com.edtech.EdTech.model.courses.Course;
 import com.edtech.EdTech.model.courses.Video;
 import com.edtech.EdTech.repository.CourseRepository;
@@ -138,6 +139,24 @@ public class LectureController {
             return ResponseEntity.ok(updatedLecture);
         }catch(RuntimeException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{courseId}/delete-lecture/{videoId}")
+    public ResponseEntity<?> deleteLecture(@PathVariable("courseId") Long courseId,
+                                           @PathVariable("videoId") Long videoId){
+
+        try{
+            String message = lectureService.deleteLecture(courseId, videoId);
+            return ResponseEntity.ok(message);
+        }catch(ItemNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+        catch(RuntimeException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
         catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

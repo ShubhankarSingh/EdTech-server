@@ -40,6 +40,8 @@ public class CourseServiceImpl implements CourseService {
         theCourse.setTitle(courseDto.getTitle());
         theCourse.setShortDescription(courseDto.getShortDescription());
         theCourse.setDescription(courseDto.getDescription());
+        theCourse.setOriginalPrice(courseDto.getOriginalPrice());
+        theCourse.setOfferPrice(courseDto.getOfferPrice());
         theCourse.setLanguage(courseDto.getLanguage());
         theCourse.setCreatedDate(courseDto.getCreatedDate());
 
@@ -65,7 +67,7 @@ public class CourseServiceImpl implements CourseService {
     public List<Course> getAllCoursesByCategory(String category) {
         Category theCategory = categoryRepository.findByCategoryType(category);
         if(theCategory == null){
-            throw new ItemNotFoundException("We can’t find the page  looking for.");
+            throw new ItemNotFoundException("We can’t find the page looking for.");
         }
         List<Course> courses = courseRepository.findCoursesByCategoryId(theCategory.getId());
 
@@ -122,6 +124,8 @@ public class CourseServiceImpl implements CourseService {
             if(courseDto.getDescription() != null) theCourse.setDescription(courseDto.getDescription());
             if(courseDto.getShortDescription() != null) theCourse.setShortDescription(courseDto.getShortDescription());
             if(courseDto.getLanguage() != null) theCourse.setLanguage(courseDto.getLanguage());
+            if(courseDto.getOriginalPrice() != null) theCourse.setOriginalPrice(courseDto.getOriginalPrice());
+            if(courseDto.getOfferPrice() != null) theCourse.setOfferPrice(courseDto.getOfferPrice());
 //            if(courseDto.getCreatedDate() != null) theCourse.setCreatedDate(courseDto.getCreatedDate());
 //
 //            Category category = categoryRepository.findById(courseDto.getCategoryId())

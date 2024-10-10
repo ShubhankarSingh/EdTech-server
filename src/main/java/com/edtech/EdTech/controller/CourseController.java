@@ -46,6 +46,8 @@ public class CourseController {
             @RequestParam("title") String title,
             @RequestParam("description") String description,
             @RequestParam("shortDescription") String shortDescription,
+            @RequestParam("originalPrice") Long originalPrice,
+            @RequestParam("offerPrice") Long offerPrice,
             @RequestParam("language") String language,
             @RequestParam("createdDate") LocalDate createdDate,
             @RequestParam("id") Long categoryId,
@@ -59,6 +61,8 @@ public class CourseController {
         courseDto.setTitle(title);
         courseDto.setDescription(description);
         courseDto.setShortDescription(shortDescription);
+        courseDto.setOriginalPrice(originalPrice);
+        courseDto.setOfferPrice(offerPrice);
         courseDto.setLanguage(language);
         courseDto.setCreatedDate(createdDate);
         courseDto.setCategoryId(categoryId);
@@ -82,6 +86,8 @@ public class CourseController {
                 courseDto.setCourseId(course.getId());
                 courseDto.setCategoryId(course.getCategory().getId());
                 courseDto.setTitle(course.getTitle());
+                courseDto.setOriginalPrice(course.getOriginalPrice());
+                courseDto.setOfferPrice(course.getOfferPrice());
 
                 UserDisplayDto userDisplayDto = userServiceImpl.mapToUserDto(course.getAuthor());
                 courseDto.setAuthor(userDisplayDto);
@@ -125,6 +131,8 @@ public class CourseController {
             courseDto.setShortDescription(course.get().getShortDescription());
             courseDto.setDescription(course.get().getDescription());
             courseDto.setLanguage(course.get().getLanguage());
+            courseDto.setOriginalPrice(course.get().getOriginalPrice());
+            courseDto.setOfferPrice(courseDto.getOfferPrice());
             courseDto.setCreatedDate(course.get().getCreatedDate());
             courseDto.setVideos(course.get().getVideos());
 
@@ -157,6 +165,8 @@ public class CourseController {
             courseDto.setAuthor(userDisplayDto);
             courseDto.setShortDescription(course.get().getShortDescription());
             courseDto.setDescription(course.get().getDescription());
+            courseDto.setOriginalPrice(course.get().getOriginalPrice());
+            courseDto.setOfferPrice(courseDto.getOfferPrice());
             courseDto.setLanguage(course.get().getLanguage());
             courseDto.setCreatedDate(course.get().getCreatedDate());
             courseDto.setVideos(course.get().getVideos());

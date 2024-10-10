@@ -41,7 +41,9 @@ public class Course {
     @Column(name = "course_language", length = 20)
     private String language;
 
-    private Long price;
+    private Long originalPrice;
+
+    private Long offerPrice;
 
     @Column(name = "created_date", nullable = false)
     private LocalDate createdDate;
