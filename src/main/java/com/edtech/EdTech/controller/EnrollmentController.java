@@ -1,13 +1,20 @@
 package com.edtech.EdTech.controller;
 
+import com.edtech.EdTech.dto.CourseDto;
+import com.edtech.EdTech.dto.EnrollmentDto;
+import com.edtech.EdTech.dto.UserDisplayDto;
 import com.edtech.EdTech.exception.ItemNotFoundException;
 import com.edtech.EdTech.model.courses.Enrollment;
+import com.edtech.EdTech.service.CourseService;
 import com.edtech.EdTech.service.EnrollmentService;
+import com.edtech.EdTech.service.UserServiceImpl;
 import lombok.AllArgsConstructor;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -15,7 +22,9 @@ import java.util.List;
 @AllArgsConstructor
 public class EnrollmentController {
 
+    private final CourseService courseService;
     private final EnrollmentService enrollmentService;
+    private final UserServiceImpl userServiceImpl;
 
     @PostMapping("/enroll/{courseId}")
     public ResponseEntity<String> enrollCourse(@RequestParam("userId") Long userId,
@@ -36,7 +45,33 @@ public class EnrollmentController {
 
         try{
             List<Enrollment> enrollments = enrollmentService.getEnrolledCourses(userId);
-            return ResponseEntity.ok(enrollments);
+
+            List<EnrollmentDto> result = new ArrayList<>();
+            for(Enrollment enrollment: enrollments){
+
+                EnrollmentDto enrollmentDto = new EnrollmentDto();
+                enrollmentDto.setEnrollmentId(enrollment.getEnrollmentId());
+                enrollmentDto.setEnrollmentDate(enrollment.getEnrollmentDate());
+
+                byte[] photoBytes = courseService.getThumbnailByCourseId(enrollment.getCourse().getId());
+                CourseDto courseDto = new CourseDto();
+                courseDto.setCourseId(enrollment.getCourse().getId());
+                courseDto.setCategoryId(enrollment.getCourse().getCategory().getId());
+                courseDto.setTitle(enrollment.getCourse().getTitle());
+
+                UserDisplayDto userDisplayDto = userServiceImpl.mapToUserDto(enrollment.getCourse().getAuthor());
+                courseDto.setAuthor(userDisplayDto);
+
+                if (photoBytes != null && photoBytes.length > 0) {
+                    String base64Photo = Base64.encodeBase64String(photoBytes);
+                    courseDto.setThumbnail(base64Photo);
+                }
+
+                enrollmentDto.getCourses().add(courseDto);
+                result.add(enrollmentDto);
+            }
+
+            return ResponseEntity.ok(result);
         }catch (ItemNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }catch (Exception e){

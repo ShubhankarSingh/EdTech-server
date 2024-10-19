@@ -24,7 +24,6 @@ public class Enrollment {
 
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false)
-    @JsonIgnore
     private Course course;
 
     @ManyToOne
