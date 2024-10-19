@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @AllArgsConstructor
 @Service
@@ -35,5 +36,14 @@ public class EnrollmentServiceImpl implements EnrollmentService{
         enrollment.setEnrollmentDate(LocalDate.now());
 
         enrollmentRepository.save(enrollment);
+    }
+
+    @Override
+    public List<Enrollment> getEnrolledCourses(Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(()-> new ItemNotFoundException("User not found with id: " + userId));
+
+        return enrollmentRepository.findByUserId(userId);
     }
 }
