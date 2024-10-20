@@ -11,4 +11,6 @@ public interface EnrollmentService {
     void enrollCourse(Long userId, Long courseId);
 
     List<Enrollment> getEnrolledCourses(Long userId);
+
+    boolean checkEnrollmentStatus(Long userId, Long courseId);
 }

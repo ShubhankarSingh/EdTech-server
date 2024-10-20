@@ -46,4 +46,17 @@ public class EnrollmentServiceImpl implements EnrollmentService{
 
         return enrollmentRepository.findByUserId(userId);
     }
+
+    @Override
+    public boolean checkEnrollmentStatus(Long userId, Long courseId) {
+
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(()-> new ItemNotFoundException("Course not found with id: " + courseId));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(()-> new ItemNotFoundException("User not found with id: " + userId));
+
+        boolean isEnrolled = enrollmentRepository.existsByUserIdAndCourseId(userId, courseId);
+        return isEnrolled;
+    }
 }
