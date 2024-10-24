@@ -18,6 +18,6 @@ public class EnrollmentDto {
     private Long enrollmentId;
     private LocalDate enrollmentDate;
 
-    private List<CourseDto> courses = new ArrayList<>();
+    private CourseDto course;
 
 }

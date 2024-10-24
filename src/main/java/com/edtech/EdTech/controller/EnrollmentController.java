@@ -80,7 +80,7 @@ public class EnrollmentController {
                     courseDto.setThumbnail(base64Photo);
                 }
 
-                enrollmentDto.getCourses().add(courseDto);
+                enrollmentDto.setCourse(courseDto);
                 result.add(enrollmentDto);
             }
 
