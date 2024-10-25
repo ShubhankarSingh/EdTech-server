@@ -12,6 +12,10 @@ import com.edtech.EdTech.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.hibernate.annotations.processing.SQL;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,18 +25,23 @@ import javax.sql.rowset.serial.SerialBlob;
 import java.io.IOException;
 import java.sql.Blob;
 import java.sql.SQLException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final CourseService courseService;
     private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private RedisTemplate<String, UserDisplayDto> redisTemplate;
+
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public UserServiceImpl(UserRepository userRepository,
                            CourseService courseService,
@@ -70,9 +79,24 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDisplayDto findUserById(Long userId) {
+
+        String redisKey = "user:" + userId;
+
+        UserDisplayDto cachedUser = redisTemplate.opsForValue().get(redisKey);
+        if(cachedUser != null){
+            logger.info("\n\nCache hit for userId: {}", userId);
+            return cachedUser;
+        }
+
+        logger.info("Cache miss for userId: {}. Fetching from database...", userId); // Log when fetching from DB
+        // If not cached, retrieve from the database
         User theUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        return mapToUserDto(theUser);
+
+        UserDisplayDto userDto = mapToUserDto(theUser);
+        redisTemplate.opsForValue().set(redisKey, userDto, Duration.ofMinutes(5)); // Set expiry for 5 minutes
+
+        return userDto;
     }
 
     @Override
