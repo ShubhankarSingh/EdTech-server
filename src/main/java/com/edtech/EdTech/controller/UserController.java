@@ -42,12 +42,12 @@ public class UserController {
         try {
 
             UserDisplayDto theUser = userService.findUserById(userId);
-            byte[] photoBytes = userService.getProfilePictureByUserId(userId);
-
-            if(photoBytes != null && photoBytes.length > 0){
-                String base64Photo = Base64.encodeBase64String(photoBytes);
-                theUser.setProfilePicture(base64Photo);
-            }
+//            byte[] photoBytes = userService.getProfilePictureByUserId(userId);
+//
+//            if(photoBytes != null && photoBytes.length > 0){
+//                String base64Photo = Base64.encodeBase64String(photoBytes);
+//                theUser.setProfilePicture(base64Photo);
+//            }
 
             return ResponseEntity.ok(theUser);
         }catch (UsernameNotFoundException e){
