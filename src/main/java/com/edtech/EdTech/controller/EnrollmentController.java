@@ -57,34 +57,9 @@ public class EnrollmentController {
     public ResponseEntity<?> getEnrolledCourses(@RequestParam("userId") Long userId){
 
         try{
-            List<Enrollment> enrollments = enrollmentService.getEnrolledCourses(userId);
+            List<EnrollmentDto> enrollments = enrollmentService.getEnrolledCourses(userId);
 
-            List<EnrollmentDto> result = new ArrayList<>();
-            for(Enrollment enrollment: enrollments){
-
-                EnrollmentDto enrollmentDto = new EnrollmentDto();
-                enrollmentDto.setEnrollmentId(enrollment.getEnrollmentId());
-                enrollmentDto.setEnrollmentDate(enrollment.getEnrollmentDate());
-
-                byte[] photoBytes = courseService.getThumbnailByCourseId(enrollment.getCourse().getId());
-                CourseDto courseDto = new CourseDto();
-                courseDto.setCourseId(enrollment.getCourse().getId());
-                courseDto.setCategoryId(enrollment.getCourse().getCategory().getId());
-                courseDto.setTitle(enrollment.getCourse().getTitle());
-
-                UserDisplayDto userDisplayDto = userServiceImpl.mapToUserDto(enrollment.getCourse().getAuthor());
-                courseDto.setAuthor(userDisplayDto);
-
-                if (photoBytes != null && photoBytes.length > 0) {
-                    String base64Photo = Base64.encodeBase64String(photoBytes);
-                    courseDto.setThumbnail(base64Photo);
-                }
-
-                enrollmentDto.setCourse(courseDto);
-                result.add(enrollmentDto);
-            }
-
-            return ResponseEntity.ok(result);
+            return ResponseEntity.ok(enrollments);
         }catch (ItemNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }catch (Exception e){
