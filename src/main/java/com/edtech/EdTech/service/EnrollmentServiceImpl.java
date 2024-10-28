@@ -21,6 +21,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -33,7 +34,7 @@ public class EnrollmentServiceImpl implements EnrollmentService{
     private final CourseService courseService;
 
     @Autowired
-    private RedisTemplate<String, List<EnrollmentCacheDto>> enrollmentCacheDtoRedisTemplate;
+    private RedisTemplate<String, List<EnrollmentDto>> enrollmentCacheDtoRedisTemplate;
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
@@ -52,16 +53,19 @@ public class EnrollmentServiceImpl implements EnrollmentService{
         enrollment.setEnrollmentDate(LocalDate.now());
 
         enrollmentRepository.save(enrollment);
+
+        // Invalidate cache after enrolling to ensure it reflects the latest data
+        String redisKey = "userEnrollment:" + userId;
+        enrollmentCacheDtoRedisTemplate.delete(redisKey);
     }
 
-    @Override
     public List<EnrollmentDto> getEnrolledCourses(Long userId) throws SQLException {
 
         String redisKey = "userEnrollment:" + userId;
-        List<EnrollmentCacheDto> cachedEnrolledCourses = enrollmentCacheDtoRedisTemplate.opsForValue().get(redisKey);
+        List<EnrollmentDto> cachedEnrolledCourses = enrollmentCacheDtoRedisTemplate.opsForValue().get(redisKey);
         if(cachedEnrolledCourses != null && !cachedEnrolledCourses.isEmpty()){
             logger.info("\n\nCache hit for enrolled courses for userId: {}\n", userId);
-            return mapToEnrollmentDtoList(cachedEnrolledCourses);
+            return cachedEnrolledCourses;
         }
 
         logger.info("\n\nCache miss for enrolled courses with userId: {}. Fetching from database...\n\n", userId); // Log when fetching from DB
@@ -71,8 +75,16 @@ public class EnrollmentServiceImpl implements EnrollmentService{
 
         List<Enrollment> enrollments = enrollmentRepository.findByUserId(userId);
 
+        List<EnrollmentDto> result = mapToEnrollmentDto(enrollments);
+
+        // Cache the list of EnrollmentCacheDto objects
+        enrollmentCacheDtoRedisTemplate.opsForValue().set(redisKey, result, Duration.ofMinutes(10));
+
+        return result;
+    }
+
+    private List<EnrollmentDto> mapToEnrollmentDto(List<Enrollment> enrollments) throws SQLException {
         List<EnrollmentDto> result = new ArrayList<>();
-        List<EnrollmentCacheDto> cacheDtos = new ArrayList<>();
         for(Enrollment enrollment: enrollments){
 
             EnrollmentDto enrollmentDto = new EnrollmentDto();
@@ -82,61 +94,26 @@ public class EnrollmentServiceImpl implements EnrollmentService{
             byte[] photoBytes = courseService.getThumbnailByCourseId(enrollment.getCourse().getId());
             CourseDto courseDto = new CourseDto();
             courseDto.setCourseId(enrollment.getCourse().getId());
-            courseDto.setCategoryId(enrollment.getCourse().getCategory().getId());
             courseDto.setTitle(enrollment.getCourse().getTitle());
 
-            UserDisplayDto userDisplayDto = userServiceImpl.mapToUserDto(enrollment.getCourse().getAuthor());
+            UserDisplayDto userDisplayDto = mapToUserDto(enrollment.getCourse().getAuthor());
             courseDto.setAuthor(userDisplayDto);
-            
-            String base64Photo = null;
+
             if (photoBytes != null && photoBytes.length > 0) {
-                base64Photo = Base64.encodeBase64String(photoBytes);
+                String base64Photo = Base64.encodeBase64String(photoBytes);
                 courseDto.setThumbnail(base64Photo);
             }
 
             enrollmentDto.setCourse(courseDto);
             result.add(enrollmentDto);
-
-            // Prepare data for caching
-            EnrollmentCacheDto enrollmentCacheDto = getEnrollmentCacheDto(enrollment, base64Photo);
-            cacheDtos.add(enrollmentCacheDto);
         }
-
-        // Cache the list of EnrollmentCacheDto objects
-        enrollmentCacheDtoRedisTemplate.opsForValue().set(redisKey, cacheDtos, Duration.ofMinutes(10));
-
         return result;
     }
-    private static EnrollmentCacheDto getEnrollmentCacheDto(Enrollment enrollment, String base64Photo) {
-        EnrollmentCacheDto enrollmentCacheDto = new EnrollmentCacheDto();
-        enrollmentCacheDto.setEnrollmentId(enrollment.getEnrollmentId());
-        enrollmentCacheDto.setEnrollmentDate(enrollment.getEnrollmentDate());
 
-        CourseCacheDto courseCacheDto = new CourseCacheDto();
-        courseCacheDto.setCourseId(enrollment.getCourse().getId());
-        courseCacheDto.setTitle(enrollment.getCourse().getTitle());
-        courseCacheDto.setThumbnail(base64Photo);
-
-        enrollmentCacheDto.setCourse(courseCacheDto);
-        return enrollmentCacheDto;
-    }
-
-    private List<EnrollmentDto> mapToEnrollmentDtoList(List<EnrollmentCacheDto> cachedEnrolledCourses) {
-        List<EnrollmentDto> enrollmentDtos = new ArrayList<>();
-        for (EnrollmentCacheDto cachedEnrollment : cachedEnrolledCourses) {
-            EnrollmentDto enrollmentDto = new EnrollmentDto();
-            enrollmentDto.setEnrollmentId(cachedEnrollment.getEnrollmentId());
-            enrollmentDto.setEnrollmentDate(cachedEnrollment.getEnrollmentDate());
-
-            CourseDto courseDto = new CourseDto();
-            courseDto.setCourseId(cachedEnrollment.getCourse().getCourseId());
-            courseDto.setTitle(cachedEnrollment.getCourse().getTitle());
-            courseDto.setThumbnail(cachedEnrollment.getCourse().getThumbnail());
-
-            enrollmentDto.setCourse(courseDto);
-            enrollmentDtos.add(enrollmentDto);
-        }
-        return enrollmentDtos;
+    public UserDisplayDto mapToUserDto(User user) {
+        UserDisplayDto userDto = new UserDisplayDto();
+        userDto.setName(user.getName());
+        return userDto;
     }
 
     @Override
@@ -148,7 +125,6 @@ public class EnrollmentServiceImpl implements EnrollmentService{
         User user = userRepository.findById(userId)
                 .orElseThrow(()-> new ItemNotFoundException("User not found with id: " + userId));
 
-        boolean isEnrolled = enrollmentRepository.existsByUserIdAndCourseId(userId, courseId);
-        return isEnrolled;
+        return enrollmentRepository.existsByUserIdAndCourseId(userId, courseId);
     }
 }

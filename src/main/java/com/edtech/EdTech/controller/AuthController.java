@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final UserService userService;
-    @Getter
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
     /*public AuthController(UserService userService){

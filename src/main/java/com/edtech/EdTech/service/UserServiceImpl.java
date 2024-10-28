@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    private RedisTemplate<String, UserCacheDto> redisTemplate;
+    private RedisTemplate<String, UserDisplayDto> redisTemplate;
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
@@ -80,10 +80,10 @@ public class UserServiceImpl implements UserService {
 
         String redisKey = "user:" + userId;
 
-        UserCacheDto cachedUser = redisTemplate.opsForValue().get(redisKey);
+        UserDisplayDto cachedUser = redisTemplate.opsForValue().get(redisKey);
         if(cachedUser != null){
             logger.info("\n\nCache hit for userId: {}\n", userId);
-            return convertToDisplayDto(cachedUser);
+            return cachedUser;
         }
 
         logger.info("\n\nCache miss for userId: {}. Fetching from database...\n\n", userId); // Log when fetching from DB
@@ -93,53 +93,12 @@ public class UserServiceImpl implements UserService {
 
         UserDisplayDto userDto = mapToUserDto(theUser);
 
-        UserCacheDto userCacheDto = convertToCacheDto(userDto);
-        redisTemplate.opsForValue().set(redisKey, userCacheDto, Duration.ofMinutes(5)); // Set expiry for 5 minutes
+
+        redisTemplate.opsForValue().set(redisKey, userDto, Duration.ofMinutes(5)); // Set expiry for 5 minutes
 
         return userDto;
     }
 
-    private UserCacheDto convertToCacheDto(UserDisplayDto userDto) {
-        UserCacheDto userCacheDto = new UserCacheDto();
-        userCacheDto.setId(userDto.getId());
-        userCacheDto.setName(userDto.getName());
-        userCacheDto.setEmail(userDto.getEmail());
-        userCacheDto.setProfilePicture(userDto.getProfilePicture());
-
-        List<CourseCacheDto> cachedCourses = userDto.getCourses().stream()
-                .map(courseDto -> {
-                    CourseCacheDto courseCacheDto = new CourseCacheDto();
-                    courseCacheDto.setCourseId(courseDto.getCourseId());
-                    courseCacheDto.setTitle(courseDto.getTitle());
-                    courseCacheDto.setThumbnail(courseDto.getThumbnail());
-                    return courseCacheDto;
-                })
-                .collect(Collectors.toList());
-
-        userCacheDto.setCourses(cachedCourses);
-        return userCacheDto;
-    }
-
-    private UserDisplayDto convertToDisplayDto(UserCacheDto userCacheDto) {
-        UserDisplayDto userDisplayDto = new UserDisplayDto();
-        userDisplayDto.setId(userCacheDto.getId());
-        userDisplayDto.setName(userCacheDto.getName());
-        userDisplayDto.setEmail(userCacheDto.getEmail());
-        userDisplayDto.setProfilePicture(userCacheDto.getProfilePicture());
-
-        List<CourseDto> courses = userCacheDto.getCourses().stream()
-                .map(courseCacheDto -> {
-                    CourseDto courseDto = new CourseDto();
-                    courseDto.setCourseId(courseCacheDto.getCourseId());
-                    courseDto.setTitle(courseCacheDto.getTitle());
-                    courseDto.setThumbnail(courseCacheDto.getThumbnail()); // Already base64 encoded thumbnail
-                    return courseDto;
-                })
-                .collect(Collectors.toList());
-
-        userDisplayDto.setCourses(courses);
-        return userDisplayDto;
-    }
 
     @Override
     public List<UserDisplayDto> findAllUsers() {

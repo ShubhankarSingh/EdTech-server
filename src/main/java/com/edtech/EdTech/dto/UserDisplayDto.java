@@ -20,9 +20,9 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDisplayDto {
+public class UserDisplayDto implements Serializable{
 
-    //private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     private Long id;
     private String name;
