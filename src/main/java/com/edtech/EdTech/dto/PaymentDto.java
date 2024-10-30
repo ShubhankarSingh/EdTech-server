@@ -8,4 +8,5 @@ public class PaymentDto {
     private Long courseId;
     private String userEmail;
     private double amount;
+    private String clientSecret;
 }
