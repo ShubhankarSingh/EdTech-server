@@ -132,7 +132,7 @@ public class CourseController {
             courseDto.setDescription(course.get().getDescription());
             courseDto.setLanguage(course.get().getLanguage());
             courseDto.setOriginalPrice(course.get().getOriginalPrice());
-            courseDto.setOfferPrice(courseDto.getOfferPrice());
+            courseDto.setOfferPrice(course.get().getOfferPrice());
             courseDto.setCreatedDate(course.get().getCreatedDate());
             courseDto.setVideos(course.get().getVideos());
 
@@ -166,7 +166,7 @@ public class CourseController {
             courseDto.setShortDescription(course.get().getShortDescription());
             courseDto.setDescription(course.get().getDescription());
             courseDto.setOriginalPrice(course.get().getOriginalPrice());
-            courseDto.setOfferPrice(courseDto.getOfferPrice());
+            courseDto.setOfferPrice(course.get().getOfferPrice());
             courseDto.setLanguage(course.get().getLanguage());
             courseDto.setCreatedDate(course.get().getCreatedDate());
             courseDto.setVideos(course.get().getVideos());

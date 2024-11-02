@@ -22,7 +22,7 @@ public class Payment {
     private Long courseId;
 
     @Column(name = "user_email")
-    private String email;
+    private String userEmail;
 
     private double amount;
 
