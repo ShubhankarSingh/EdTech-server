@@ -9,6 +9,7 @@ import com.edtech.EdTech.repository.CategoryRepository;
 import com.edtech.EdTech.repository.CourseRepository;
 import com.edtech.EdTech.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,9 +29,9 @@ public class CourseServiceImpl implements CourseService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
 
+    private RedisTemplate<String, Object> recentlyViewedCourseCache;
     @Override
     public Course addNewCourse(CourseDto courseDto, MultipartFile thumbnail) throws IOException, SQLException {
-
 
         User theUser = userRepository.findById(courseDto.getUserId())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
@@ -87,11 +88,18 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Optional<Course> getCourseById(Long id) {
-        Optional<Course> theCourse = courseRepository.findById(id);
+    public Optional<Course> getCourseById(Long courseId) {
+        Optional<Course> theCourse = courseRepository.findById(courseId);
         if(theCourse.isEmpty()){
             throw new ItemNotFoundException("We can’t find the page you’re looking for.");
         }
+
+        Long userId = theCourse.get().getAuthor().getId();
+        System.out.println("\n\n User id is: " + userId);
+        // Cache recently viewed course
+        String key = "recently_viewed:" + userId;
+        recentlyViewedCourseCache.opsForList().leftPush(key, courseId);
+        recentlyViewedCourseCache.opsForList().trim(key, 0, 2);
         return theCourse;
     }
 
@@ -112,7 +120,6 @@ public class CourseServiceImpl implements CourseService {
         courseRepository.deleteById(courseId);
 
     }
-
     @Override
     public Course updateCourse(Long courseId, CourseDto courseDto) {
         try{

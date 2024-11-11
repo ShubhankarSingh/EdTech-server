@@ -14,6 +14,7 @@ import com.edtech.EdTech.service.UserService;
 import com.edtech.EdTech.service.UserServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -39,6 +40,8 @@ public class CourseController {
     private final UserService userService;
     private final UserServiceImpl userServiceImpl;
     private final UserRepository userRepository;
+
+    private RedisTemplate<String, Object> recentlyViewedCourseCache;
 
     @PostMapping("/add-course")
     public ResponseEntity<?> addCourse(@Valid
@@ -184,6 +187,11 @@ public class CourseController {
         catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
+    }
+
+    public List<Object> recentlyViewedCourses(Long userId){
+        String key = "recently_viewed:" + userId;
+        return recentlyViewedCourseCache.opsForList().range(key, 0, -1);
     }
 
     @PutMapping("/update/{courseId}")

@@ -12,14 +12,6 @@ import java.util.List;
 @Configuration
 public class RedisConfig {
 
-//    @Bean
-//    public RedisTemplate<String, UserCacheDto> redisTemplate(RedisConnectionFactory connectionFactory){
-//
-//        RedisTemplate<String, UserCacheDto> template = new RedisTemplate<>();
-//        template.setConnectionFactory(connectionFactory);
-//        return template;
-//    }
-
     @Bean
     public RedisTemplate<String, UserDisplayDto> redisTemplate(RedisConnectionFactory connectionFactory){
 
@@ -27,11 +19,17 @@ public class RedisConfig {
         template.setConnectionFactory(connectionFactory);
         return template;
     }
-
     @Bean
     public RedisTemplate<String, List<EnrollmentDto>> enrollmentCacheDtoRedisTemplate(RedisConnectionFactory connectionFactory){
 
         RedisTemplate<String, List<EnrollmentDto>> template = new RedisTemplate<>();
+        template.setConnectionFactory(connectionFactory);
+        return template;
+    }
+
+    public RedisTemplate<String, Object> recentlyViewedCourseCache(RedisConnectionFactory connectionFactory){
+
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
         return template;
     }
