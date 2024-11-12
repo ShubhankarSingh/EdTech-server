@@ -7,6 +7,7 @@ import com.edtech.EdTech.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,7 +18,7 @@ public class ReviewServiceImpl implements ReviewService{
     private final CourseService courseService;
     private final ReviewRepository reviewRepository;
     @Override
-    public Review addReview(Review review) {
+    public Review addReview(Review review) throws SQLException {
 
         Review newReview = new Review();
         newReview.setDescription(review.getDescription());

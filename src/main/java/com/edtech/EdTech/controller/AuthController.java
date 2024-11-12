@@ -9,7 +9,6 @@ import com.edtech.EdTech.security.jwt.JwtUtils;
 import com.edtech.EdTech.security.user.CustomUserDetails;
 import com.edtech.EdTech.service.UserService;
 import jakarta.validation.Valid;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,5 +1,6 @@
 package com.edtech.EdTech.security;
 
+import com.edtech.EdTech.dto.CourseDto;
 import com.edtech.EdTech.dto.EnrollmentDto;
 import com.edtech.EdTech.dto.UserDisplayDto;
 import org.springframework.context.annotation.Bean;
@@ -27,9 +28,10 @@ public class RedisConfig {
         return template;
     }
 
-    public RedisTemplate<String, Object> recentlyViewedCourseCache(RedisConnectionFactory connectionFactory){
+    @Bean
+    public RedisTemplate<String, CourseDto> recentlyViewedCourseCache(RedisConnectionFactory connectionFactory){
 
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        RedisTemplate<String, CourseDto> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
         return template;
     }

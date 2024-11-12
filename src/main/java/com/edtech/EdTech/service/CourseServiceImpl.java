@@ -8,8 +8,13 @@ import com.edtech.EdTech.model.users.User;
 import com.edtech.EdTech.repository.CategoryRepository;
 import com.edtech.EdTech.repository.CourseRepository;
 import com.edtech.EdTech.repository.UserRepository;
+import com.edtech.EdTech.security.user.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.codec.binary.Base64;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +23,7 @@ import javax.sql.rowset.serial.SerialBlob;
 import java.io.IOException;
 import java.sql.Blob;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,7 +35,8 @@ public class CourseServiceImpl implements CourseService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
 
-    private RedisTemplate<String, Object> recentlyViewedCourseCache;
+    @Autowired
+    private RedisTemplate<String, CourseDto> recentlyViewedCourseCache;
     @Override
     public Course addNewCourse(CourseDto courseDto, MultipartFile thumbnail) throws IOException, SQLException {
 
@@ -88,20 +95,40 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Optional<Course> getCourseById(Long courseId) {
+    public Optional<Course> getCourseById(Long courseId) throws SQLException {
         Optional<Course> theCourse = courseRepository.findById(courseId);
-        if(theCourse.isEmpty()){
+        if (theCourse.isEmpty()) {
             throw new ItemNotFoundException("We can’t find the page you’re looking for.");
         }
 
-        Long userId = theCourse.get().getAuthor().getId();
-        System.out.println("\n\n User id is: " + userId);
-        // Cache recently viewed course
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        System.out.println("\n\n\n User id:" + userDetails.getId());
+        System.out.println("\n\n\n User id:" + userDetails.getId().getClass());
+        Long userId = userDetails.getId();
         String key = "recently_viewed:" + userId;
-        recentlyViewedCourseCache.opsForList().leftPush(key, courseId);
+
+        System.out.println("\n\n\n User id:" + userId);
+
+        // Create a new CourseDto for the viewed course
+        CourseDto viewedCourse = new CourseDto();
+        viewedCourse.setCourseId(courseId);
+        viewedCourse.setTitle(theCourse.get().getTitle());
+
+        byte[] photoBytes = getThumbnailByCourseId(courseId);
+        if (photoBytes != null && photoBytes.length > 0) {
+            String base64Photo = Base64.encodeBase64String(photoBytes);
+            viewedCourse.setThumbnail(base64Photo);
+        }
+
+        // Push the CourseDto directly to the Redis list and trim to keep only the top 3 items
+        recentlyViewedCourseCache.opsForList().leftPush(key, viewedCourse);
         recentlyViewedCourseCache.opsForList().trim(key, 0, 2);
+
         return theCourse;
     }
+
 
     @Override
     public Optional<Course> getCourseByTitle(String title) {

@@ -14,6 +14,7 @@ import com.edtech.EdTech.service.UserService;
 import com.edtech.EdTech.service.UserServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +42,8 @@ public class CourseController {
     private final UserServiceImpl userServiceImpl;
     private final UserRepository userRepository;
 
-    private RedisTemplate<String, Object> recentlyViewedCourseCache;
+    @Autowired
+    private RedisTemplate<String, CourseDto> recentlyViewedCourseCache;
 
     @PostMapping("/add-course")
     public ResponseEntity<?> addCourse(@Valid
@@ -153,12 +155,12 @@ public class CourseController {
         }
     }
 
-    @GetMapping("/course/{id:[0-9]+}")
-    public ResponseEntity<?> getCourseById(@PathVariable Long id){
+    @GetMapping("/course/{courseId:[0-9]+}")
+    public ResponseEntity<?> getCourseById(@PathVariable Long courseId){
         try{
-            Optional<Course> course = courseService.getCourseById(id);
+            Optional<Course> course = courseService.getCourseById(courseId);
 
-            byte[] photoBytes = courseService.getThumbnailByCourseId(id);
+            byte[] photoBytes = courseService.getThumbnailByCourseId(courseId);
             CourseDto courseDto = new CourseDto();
             courseDto.setCourseId(course.get().getId());
             courseDto.setCategoryId(course.get().getCategory().getId());
@@ -189,9 +191,17 @@ public class CourseController {
         }
     }
 
-    public List<Object> recentlyViewedCourses(Long userId){
+    @GetMapping("/viewed-courses")
+    public ResponseEntity<List<CourseDto>> getRecentlyViewedCourses(Long userId){
+
         String key = "recently_viewed:" + userId;
-        return recentlyViewedCourseCache.opsForList().range(key, 0, -1);
+        List<CourseDto> recentlyViewedCourses = recentlyViewedCourseCache.opsForList().range(key, 0, -1);
+
+        if (recentlyViewedCourses == null || recentlyViewedCourses.isEmpty()) {
+            return ResponseEntity.noContent().build(); // Return 204 if no recently viewed courses found
+        }
+
+        return ResponseEntity.ok(recentlyViewedCourses);
     }
 
     @PutMapping("/update/{courseId}")

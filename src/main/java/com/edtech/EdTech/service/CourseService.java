@@ -17,7 +17,7 @@ public interface CourseService {
     List<Course> getAllCourses();
     List<Course> getAllCoursesByCategory(String category);
     byte[] getThumbnailByCourseId(Long courseId) throws SQLException;
-    Optional<Course> getCourseById(Long id);
+    Optional<Course> getCourseById(Long id) throws SQLException;
 
     Optional<Course> getCourseByTitle(String title);
 
