@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -102,31 +103,34 @@ public class CourseServiceImpl implements CourseService {
         }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("\n\n\n User auth:" + authentication);
+        if (authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)) {
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            Long userId = userDetails.getId();
 
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        System.out.println("\n\n\n User id:" + userDetails.getId());
-        System.out.println("\n\n\n User id:" + userDetails.getId().getClass());
-        Long userId = userDetails.getId();
-        String key = "recently_viewed:" + userId;
+            System.out.println("\n\n\n User id is:" + userId);
+            // Use userId for recently viewed course tracking
+            String key = "recently_viewed:" + userId;
 
-        System.out.println("\n\n\n User id:" + userId);
+            // Proceed with storing course in Redis for this authenticated user
+            CourseDto viewedCourse = new CourseDto();
+            viewedCourse.setCourseId(courseId);
+            viewedCourse.setTitle(theCourse.get().getTitle());
 
-        // Create a new CourseDto for the viewed course
-        CourseDto viewedCourse = new CourseDto();
-        viewedCourse.setCourseId(courseId);
-        viewedCourse.setTitle(theCourse.get().getTitle());
+            byte[] photoBytes = getThumbnailByCourseId(courseId);
+            if (photoBytes != null && photoBytes.length > 0) {
+                String base64Photo = Base64.encodeBase64String(photoBytes);
+                viewedCourse.setThumbnail(base64Photo);
+            }
 
-        byte[] photoBytes = getThumbnailByCourseId(courseId);
-        if (photoBytes != null && photoBytes.length > 0) {
-            String base64Photo = Base64.encodeBase64String(photoBytes);
-            viewedCourse.setThumbnail(base64Photo);
+            // Push the CourseDto directly to the Redis list and trim to keep only the top 3 items
+//        recentlyViewedCourseCache.opsForList().leftPush(key, viewedCourse);
+//        recentlyViewedCourseCache.opsForList().trim(key, 0, 2);
+
+            // ... rest of your code using userDetails
         }
-
-        // Push the CourseDto directly to the Redis list and trim to keep only the top 3 items
-        recentlyViewedCourseCache.opsForList().leftPush(key, viewedCourse);
-        recentlyViewedCourseCache.opsForList().trim(key, 0, 2);
-
-        return theCourse;
+            // Handle unauthenticated user case
+            return theCourse;
     }
 
 

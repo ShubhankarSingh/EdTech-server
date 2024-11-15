@@ -26,9 +26,6 @@ public class AuthController {
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
-    /*public AuthController(UserService userService){
-        this.userService = userService;
-    }*/
 
     @GetMapping("/index")
     public String home(){
@@ -58,6 +55,8 @@ public class AuthController {
             // Generate JWT Token
             String token = jwtUtils.generateToken(authentication);
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+
+            System.out.println("\n\n\nInside auth controller User id is: " + userDetails.getId().getClass() + " " + userDetails.getEmail() + " " + "\n\n");
 
             return ResponseEntity.ok(new JwtResponse(
                     userDetails.getId(),
