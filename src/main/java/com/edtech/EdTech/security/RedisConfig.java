@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.util.List;
 
@@ -33,6 +35,12 @@ public class RedisConfig {
 
         RedisTemplate<String, CourseDto> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
+
+        template.setKeySerializer(new StringRedisSerializer());
+
+        // Set Value Serializer to JSON for human-readable storage
+        Jackson2JsonRedisSerializer<CourseDto> serializer = new Jackson2JsonRedisSerializer<>(CourseDto.class);
+        template.setValueSerializer(serializer);
         return template;
     }
 

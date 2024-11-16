@@ -192,10 +192,12 @@ public class CourseController {
     }
 
     @GetMapping("/viewed-courses")
-    public ResponseEntity<List<CourseDto>> getRecentlyViewedCourses(Long userId){
+    public ResponseEntity<List<CourseDto>> getRecentlyViewedCourses(@RequestParam("userId") Long userId){
 
         String key = "recently_viewed:" + userId;
+        System.out.println("Fetching courses with key: " + key);
         List<CourseDto> recentlyViewedCourses = recentlyViewedCourseCache.opsForList().range(key, 0, -1);
+        System.out.println("Recently viewed courses: " + recentlyViewedCourses);
 
         if (recentlyViewedCourses == null || recentlyViewedCourses.isEmpty()) {
             return ResponseEntity.noContent().build(); // Return 204 if no recently viewed courses found

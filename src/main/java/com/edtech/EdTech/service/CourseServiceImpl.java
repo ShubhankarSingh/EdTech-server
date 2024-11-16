@@ -24,6 +24,7 @@ import javax.sql.rowset.serial.SerialBlob;
 import java.io.IOException;
 import java.sql.Blob;
 import java.sql.SQLException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -102,6 +103,7 @@ public class CourseServiceImpl implements CourseService {
             throw new ItemNotFoundException("We can’t find the page you’re looking for.");
         }
 
+        // Add recently viewed courses to Redis
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         System.out.println("\n\n\n User auth:" + authentication);
         if (authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)) {
@@ -109,28 +111,40 @@ public class CourseServiceImpl implements CourseService {
             Long userId = userDetails.getId();
 
             System.out.println("\n\n\n User id is:" + userId);
-            // Use userId for recently viewed course tracking
             String key = "recently_viewed:" + userId;
 
-            // Proceed with storing course in Redis for this authenticated user
-            CourseDto viewedCourse = new CourseDto();
-            viewedCourse.setCourseId(courseId);
-            viewedCourse.setTitle(theCourse.get().getTitle());
+            // Check if the course is already in the Redis list
+            List<CourseDto> existingCourses = recentlyViewedCourseCache.opsForList().range(key, 0, -1);
+            boolean alreadyExists = existingCourses!=null && existingCourses.stream()
+                    .anyMatch(course -> course.getCourseId().equals(courseId));
 
-            byte[] photoBytes = getThumbnailByCourseId(courseId);
-            if (photoBytes != null && photoBytes.length > 0) {
-                String base64Photo = Base64.encodeBase64String(photoBytes);
-                viewedCourse.setThumbnail(base64Photo);
+            if(!alreadyExists) {
+
+                // Proceed with storing course in Redis for this authenticated user
+                CourseDto viewedCourse = new CourseDto();
+                viewedCourse.setCourseId(courseId);
+                viewedCourse.setTitle(theCourse.get().getTitle());
+
+                byte[] photoBytes = getThumbnailByCourseId(courseId);
+                if (photoBytes != null && photoBytes.length > 0) {
+                    String base64Photo = Base64.encodeBase64String(photoBytes);
+                    viewedCourse.setThumbnail(base64Photo);
+                }
+
+                //Push the CourseDto directly to the Redis list and trim to keep only the top 3 items
+                recentlyViewedCourseCache.opsForList().leftPush(key, viewedCourse);
+                recentlyViewedCourseCache.opsForList().trim(key, 0, 2);
+
+                // Set TTL (Time-To-Live) for the key
+                recentlyViewedCourseCache.expire(key, Duration.ofMinutes(5));
+
+                System.out.println("Course added to Redis list.");
+            } else {
+                System.out.println("Course already exists in Redis list. Skipping addition.");
             }
-
-            // Push the CourseDto directly to the Redis list and trim to keep only the top 3 items
-//        recentlyViewedCourseCache.opsForList().leftPush(key, viewedCourse);
-//        recentlyViewedCourseCache.opsForList().trim(key, 0, 2);
-
-            // ... rest of your code using userDetails
         }
-            // Handle unauthenticated user case
-            return theCourse;
+
+        return theCourse;
     }
 
 
