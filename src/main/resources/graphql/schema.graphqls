@@ -1,0 +1,15 @@
+type Course {
+    id: ID!                          # Unique identifier (non-nullable)
+    title: String!                   # Course title (non-nullable)
+    author: User                     # The User who authored the course (nullable)
+    shortDescription: String         # A short description of the course (nullable)
+    description: String!             # Full course description (non-nullable)
+    language: String                 # Language of the course (nullable)
+    originalPrice: Float             # Original price of the course
+    offerPrice: Float                # Discounted price of the course
+    createdDate: String!             # ISO-8601 date format (non-nullable)
+    category: Category               # Reference to the category of the course
+    thumbnail: String                # Base64-encoded thumbnail image as a string
+    videos: [Video!]!                # List of videos (non-null list with non-null elements)
+    reviews: [Review!]!              # List of reviews (non-null list with non-null elements)
+}

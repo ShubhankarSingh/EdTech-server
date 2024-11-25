@@ -136,7 +136,7 @@ public class CourseServiceImpl implements CourseService {
                 recentlyViewedCourseCache.opsForList().trim(key, 0, 2);
 
                 // Set TTL (Time-To-Live) for the key
-                recentlyViewedCourseCache.expire(key, Duration.ofMinutes(5));
+                recentlyViewedCourseCache.expire(key, Duration.ofHours(1));
 
                 System.out.println("Course added to Redis list.");
             } else {
