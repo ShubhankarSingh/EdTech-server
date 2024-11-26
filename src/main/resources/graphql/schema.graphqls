@@ -51,3 +51,8 @@ type Enrollment{
     user: User
     enrollmentDate: String
 }
+
+type Query{
+    getAllCourseByCategory(category:String!):[Course],
+    getCourseById(id:ID!):Course
+}

@@ -15,7 +15,10 @@ import com.edtech.EdTech.service.UserServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -78,8 +81,9 @@ public class CourseController {
     }
 
     //Get all courses by category
-    @GetMapping("/{category}")
-    public ResponseEntity<?> getAllCoursesByCategory(@PathVariable String category){
+//    @GetMapping("/{category}")
+    @QueryMapping
+    public ResponseEntity<?> getAllCoursesByCategory(@Argument String category){
         try {
             List<Course> courses = courseService.getAllCoursesByCategory(category);
 
@@ -155,8 +159,9 @@ public class CourseController {
         }
     }
 
-    @GetMapping("/course/{courseId:[0-9]+}")
-    public ResponseEntity<?> getCourseById(@PathVariable Long courseId){
+//    @GetMapping("/course/{courseId:[0-9]+}")
+    @QueryMapping
+    public ResponseEntity<?> getCourseById(@Argument Long courseId){
         try{
             Optional<Course> course = courseService.getCourseById(courseId);
 
