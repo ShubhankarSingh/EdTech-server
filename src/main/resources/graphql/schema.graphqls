@@ -13,3 +13,41 @@ type Course {
     videos: [Video!]!                # List of videos (non-null list with non-null elements)
     reviews: [Review!]!              # List of reviews (non-null list with non-null elements)
 }
+
+type User{
+    id: ID!
+    name: String
+    email: String
+    profilePicture: String
+    courses: [Course!]!
+}
+
+type Category{
+    id: ID!
+    categoryType: String
+    courses: [Course!]!
+}
+
+type Video{
+    id: ID!
+    title: String
+    url: String
+    course: Course
+}
+
+type Review{
+    id: ID!
+    userId: Int
+    username: String
+    description: String
+    rating: String
+    timestamp: String!
+    courseId: Course
+}
+
+type Enrollment{
+    enrollmentId:ID!
+    course: Course
+    user: User
+    enrollmentDate: String
+}
