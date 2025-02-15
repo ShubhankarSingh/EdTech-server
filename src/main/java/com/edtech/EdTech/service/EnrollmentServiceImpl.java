@@ -93,7 +93,7 @@ public class EnrollmentServiceImpl implements EnrollmentService{
 
             byte[] photoBytes = courseService.getThumbnailByCourseId(enrollment.getCourse().getId());
             CourseDto courseDto = new CourseDto();
-            courseDto.setCourseId(enrollment.getCourse().getId());
+            courseDto.setId(enrollment.getCourse().getId());
             courseDto.setTitle(enrollment.getCourse().getTitle());
 
             UserDisplayDto userDisplayDto = mapToUserDto(enrollment.getCourse().getAuthor());
