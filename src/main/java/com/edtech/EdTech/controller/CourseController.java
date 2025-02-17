@@ -80,57 +80,21 @@ public class CourseController {
         return ResponseEntity.ok(savedCourse);
     }
 
-    @QueryMapping
-    public List<CourseDto> getAllCoursesByCategory(@Argument String category) {
-        try {
-            List<Course> courses = courseService.getAllCoursesByCategory(category);
-
-            for (Course course : courses) {
-                System.out.println("\n\n\n\nCourse ID: " + course.getId());
-            }
-
-            List<CourseDto> result = new ArrayList<>();
-            for (Course course : courses) {
-                byte[] photoBytes = courseService.getThumbnailByCourseId(course.getId());
-                CourseDto courseDto = new CourseDto();
-                courseDto.setId(course.getId());
-                courseDto.setCategoryId(course.getCategory().getId());
-                courseDto.setTitle(course.getTitle());
-                courseDto.setOriginalPrice(course.getOriginalPrice());
-                courseDto.setOfferPrice(course.getOfferPrice());
-
-                UserDisplayDto userDisplayDto = userServiceImpl.mapToUserDto(course.getAuthor());
-                courseDto.setAuthor(userDisplayDto);
-                courseDto.setShortDescription(course.getShortDescription());
-
-                if (photoBytes != null && photoBytes.length > 0) {
-                    String base64Photo = Base64.encodeBase64String(photoBytes);
-                    courseDto.setThumbnail(base64Photo);
-                }
-
-                result.add(courseDto);
-            }
-
-            return result; // Return plain List<CourseDto>
-        } catch (Exception e) {
-            throw new RuntimeException("Error fetching courses by category: " + e.getMessage());
-        }
-    }
-
-
-    //Get all courses by category
-//    @GetMapping("/{category}")
+//    GraphQL query
 //    @QueryMapping
-//    public ResponseEntity<?> getAllCoursesByCategory(@Argument String category){
+//    public List<CourseDto> getAllCoursesByCategory(@Argument String category) {
 //        try {
 //            List<Course> courses = courseService.getAllCoursesByCategory(category);
 //
-//            List<CourseDto> result = new ArrayList<>();
-//            for(Course course: courses ){
+//            for (Course course : courses) {
+//                System.out.println("\n\n\n\nCourse ID: " + course.getId());
+//            }
 //
+//            List<CourseDto> result = new ArrayList<>();
+//            for (Course course : courses) {
 //                byte[] photoBytes = courseService.getThumbnailByCourseId(course.getId());
 //                CourseDto courseDto = new CourseDto();
-//                courseDto.setCourseId(course.getId());
+//                courseDto.setId(course.getId());
 //                courseDto.setCategoryId(course.getCategory().getId());
 //                courseDto.setTitle(course.getTitle());
 //                courseDto.setOriginalPrice(course.getOriginalPrice());
@@ -139,10 +103,6 @@ public class CourseController {
 //                UserDisplayDto userDisplayDto = userServiceImpl.mapToUserDto(course.getAuthor());
 //                courseDto.setAuthor(userDisplayDto);
 //                courseDto.setShortDescription(course.getShortDescription());
-//                //courseDto.setDescription(course.getDescription());
-//                //courseDto.setLanguage(course.getLanguage());
-//                //courseDto.setCreatedDate(course.getCreatedDate());
-//                //courseDto.setVideos(course.getVideos());
 //
 //                if (photoBytes != null && photoBytes.length > 0) {
 //                    String base64Photo = Base64.encodeBase64String(photoBytes);
@@ -150,16 +110,56 @@ public class CourseController {
 //                }
 //
 //                result.add(courseDto);
-//
 //            }
-//            return ResponseEntity.ok(result);
-//        }catch (ItemNotFoundException e){
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-//        }
-//        catch (Exception e){
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+//
+//            return result; // Return plain List<CourseDto>
+//        } catch (Exception e) {
+//            throw new RuntimeException("Error fetching courses by category: " + e.getMessage());
 //        }
 //    }
+
+
+    //Get all courses by category
+    @GetMapping("/{category}")
+    public ResponseEntity<?> getAllCoursesByCategory(@PathVariable String category){
+        try {
+            List<Course> courses = courseService.getAllCoursesByCategory(category);
+
+            List<CourseDto> result = new ArrayList<>();
+            for(Course course: courses ){
+
+                byte[] photoBytes = courseService.getThumbnailByCourseId(course.getId());
+                CourseDto courseDto = new CourseDto();
+                courseDto.setCourseId(course.getId());
+                courseDto.setCategoryId(course.getCategory().getId());
+                courseDto.setTitle(course.getTitle());
+                courseDto.setOriginalPrice(course.getOriginalPrice());
+                courseDto.setOfferPrice(course.getOfferPrice());
+
+                UserDisplayDto userDisplayDto = userServiceImpl.mapToUserDto(course.getAuthor());
+                courseDto.setAuthor(userDisplayDto);
+                courseDto.setShortDescription(course.getShortDescription());
+                //courseDto.setDescription(course.getDescription());
+                //courseDto.setLanguage(course.getLanguage());
+                //courseDto.setCreatedDate(course.getCreatedDate());
+                //courseDto.setVideos(course.getVideos());
+
+                if (photoBytes != null && photoBytes.length > 0) {
+                    String base64Photo = Base64.encodeBase64String(photoBytes);
+                    courseDto.setThumbnail(base64Photo);
+                }
+
+                result.add(courseDto);
+
+            }
+            return ResponseEntity.ok(result);
+        }catch (ItemNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 
     // Get a course by title
     @GetMapping("/course/{title:[a-zA-Z]+}")
@@ -169,7 +169,7 @@ public class CourseController {
 
             byte[] photoBytes = courseService.getThumbnailByCourseId(course.get().getId());
             CourseDto courseDto = new CourseDto();
-            courseDto.setId(course.get().getId());
+            courseDto.setCourseId(course.get().getId());
             courseDto.setCategoryId(course.get().getCategory().getId());
             courseDto.setTitle(course.get().getTitle());
 
@@ -197,15 +197,15 @@ public class CourseController {
         }
     }
 
-//    @GetMapping("/course/{courseId:[0-9]+}")
-    @QueryMapping
-    public ResponseEntity<?> getCourseById(@Argument Long courseId){
+    //@QueryMapping
+    @GetMapping("/course/{courseId:[0-9]+}")
+    public ResponseEntity<?> getCourseById(@PathVariable Long courseId){
         try{
             Optional<Course> course = courseService.getCourseById(courseId);
 
             byte[] photoBytes = courseService.getThumbnailByCourseId(courseId);
             CourseDto courseDto = new CourseDto();
-            courseDto.setId(course.get().getId());
+            courseDto.setCourseId(course.get().getId());
             courseDto.setCategoryId(course.get().getCategory().getId());
             courseDto.setTitle(course.get().getTitle());
 

@@ -27,7 +27,7 @@ public class CourseDto implements Serializable {
 
     private static final long serialVersionUID = 2L;
 
-    private Long id;
+    private Long courseId;
 
     @NotEmpty(message = "Title is required")
     private String title;

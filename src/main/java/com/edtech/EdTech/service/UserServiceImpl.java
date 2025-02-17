@@ -168,7 +168,7 @@ public class UserServiceImpl implements UserService {
 
     private CourseDto mapToCourseDto(Course course){
         CourseDto courseDto = new CourseDto();
-        courseDto.setId(course.getId());
+        courseDto.setCourseId(course.getId());
         courseDto.setTitle(course.getTitle());
         try{
             byte[] photoBytes = courseService.getThumbnailByCourseId(course.getId());

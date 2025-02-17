@@ -7,6 +7,7 @@ import com.edtech.EdTech.model.courses.Course;
 import com.edtech.EdTech.model.courses.Video;
 import com.edtech.EdTech.repository.CourseRepository;
 import com.edtech.EdTech.repository.LectureRespository;
+import com.edtech.EdTech.service.AWSServiceImpl;
 import com.edtech.EdTech.service.LectureService;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletResponse;
@@ -39,6 +40,7 @@ public class LectureController {
     private final LectureService lectureService;
     private final LectureRespository lectureRespository;
     private final CourseRepository courseRepository;
+    private final AWSServiceImpl awsService;
 
     @Value("${project.video}")
     private String path;
@@ -49,11 +51,17 @@ public class LectureController {
                                         @RequestParam("url") MultipartFile file){
         try{
 
-            String fileName = saveFile(file);
+            // upload file to local directory and get the URL
+            //String fileName = saveFile(file);
+
+            // Upload file to AWS S3 and get the URL
+            String fileUrl = awsService.uploadFile(file.getOriginalFilename(), file.getBytes());
 
             VideoDto videoDto = new VideoDto();
             videoDto.setTitle(title);
-            videoDto.setUrl(fileName);  // Relative URL
+            //videoDto.setUrl(fileName);  // Relative URL
+
+            videoDto.setUrl(fileUrl);  // store S3 URL in the database
 
             Video video = lectureService.saveLecture(courseId, videoDto);
             return ResponseEntity.ok(video);
@@ -93,16 +101,24 @@ public class LectureController {
         return newFileName;
     }
 
+     // Get video url from local server and play it in the browser
+//    @GetMapping("/play/{videoId}")
+//    public void playLecture(@PathVariable Long videoId, HttpServletResponse response) throws IOException{
+//
+//        Optional<Video> video = lectureRespository.findById(videoId);
+//        InputStream resource = lectureService.getResource(path, video.get().getUrl(), videoId);
+//        response.setContentType(MediaType.ALL_VALUE);
+//        StreamUtils.copy(resource, response.getOutputStream());
+//    }
 
+    // Get S3 video url
     @GetMapping("/play/{videoId}")
-    public void playLecture(@PathVariable Long videoId, HttpServletResponse response) throws IOException{
-        System.out.println("Hello");
-        Optional<Video> video = lectureRespository.findById(videoId);
-        InputStream resource = lectureService.getResource(path, video.get().getUrl(), videoId);
-        response.setContentType(MediaType.ALL_VALUE);
-        StreamUtils.copy(resource, response.getOutputStream());
-
+    public ResponseEntity<String> playLecture(@PathVariable Long videoId) {
+        return lectureRespository.findById(videoId)
+                .map(video -> ResponseEntity.ok().contentType(MediaType.TEXT_PLAIN).body(video.getUrl()))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("Video not found"));
     }
+
 
     @GetMapping("/{courseId}/all-lectures")
     public ResponseEntity<?> getAllLectures(@PathVariable Long courseId){

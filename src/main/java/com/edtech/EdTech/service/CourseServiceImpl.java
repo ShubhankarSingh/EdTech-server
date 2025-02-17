@@ -116,13 +116,13 @@ public class CourseServiceImpl implements CourseService {
             // Check if the course is already in the Redis list
             List<CourseDto> existingCourses = recentlyViewedCourseCache.opsForList().range(key, 0, -1);
             boolean alreadyExists = existingCourses!=null && existingCourses.stream()
-                    .anyMatch(course -> course.getId().equals(courseId));
+                    .anyMatch(course -> course.getCourseId().equals(courseId));
 
             if(!alreadyExists) {
 
                 // Proceed with storing course in Redis for this authenticated user
                 CourseDto viewedCourse = new CourseDto();
-                viewedCourse.setId(courseId);
+                viewedCourse.setCourseId(courseId);
                 viewedCourse.setTitle(theCourse.get().getTitle());
 
                 byte[] photoBytes = getThumbnailByCourseId(courseId);
